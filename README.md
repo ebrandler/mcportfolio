@@ -235,6 +235,14 @@ Maximum Expected Return: 10.8% annually
 
 ## Installation
 
+You can install the project using:
+
+```bash
+uv run install.py
+```
+
+This will install all dependencies and development tools.
+
 ### Prerequisites
 
 - Python 3.12 or higher

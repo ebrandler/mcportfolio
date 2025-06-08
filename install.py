@@ -8,6 +8,7 @@ import json
 import os
 import platform
 import sys
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -94,68 +95,36 @@ def install_to_config(config_path: Path, script_dir: Path, server_name: str) -> 
     return True
 
 
-def main() -> None:
-    """Install MCP server to local configurations"""
-    script_dir = Path(__file__).parent.absolute()
-    server_name = SERVER_NAME
-
-    print("MCP Server Installer")
-    print("======================")
-    print()
-    print("This will install the MCPortfolio to your local client configurations.")
-    print(f"Installation directory: {script_dir}")
-    print(f"Server name: {server_name}")
-    print()
-
-    # Ask for confirmation
-    while True:
-        response = (
-            input("Do you want to proceed with the installation? (y/n): ")
-            .lower()
-            .strip()
-        )
-        if response in ["y", "yes"]:
-            break
-        elif response in ["n", "no"]:
-            print("Installation cancelled.")
-            sys.exit(0)
-        else:
-            print("Please enter 'y' for yes or 'n' for no.")
-
-    print()
-
-    # Get config paths
-    claude_config, cursor_config = get_config_paths()
-    installed_to = []
-
-    # Install to Claude Desktop
-    try:
-        install_to_config(claude_config, script_dir, server_name)
-        print(f"✓ Installed to Claude Desktop: {claude_config}")
-        installed_to.append("Claude Desktop")
-    except Exception as e:
-        print(f"✗ Failed to install to Claude Desktop: {e}")
-
-    # Install to Cursor (if config directory exists)
-    if cursor_config.parent.exists():
-        try:
-            install_to_config(cursor_config, script_dir, server_name)
-            print(f"✓ Installed to Cursor: {cursor_config}")
-            installed_to.append("Cursor")
-        except Exception as e:
-            print(f"✗ Failed to install to Cursor: {e}")
-    else:
-        print("• Cursor config directory not found, skipping")
-
-    print()
-    if installed_to:
-        print("Installation completed successfully!")
-        print(f"Installed to: {', '.join(installed_to)}")
-        print()
-        print("Please restart your client(s) to use the MCP server.")
-    else:
-        print("Installation failed - no configurations were updated.")
+def run_command(cmd: list[str]) -> None:
+    """Run a command and print its output."""
+    print(f"Running: {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"Error: {result.stderr}")
         sys.exit(1)
+    print(result.stdout)
+
+
+def main() -> None:
+    """Install project dependencies and setup."""
+    # Ensure we're in the project root
+    project_root = Path(__file__).parent
+    if not (project_root / "pyproject.toml").exists():
+        print("Error: Must run install.py from project root directory")
+        sys.exit(1)
+
+    # Install dependencies
+    print("Installing dependencies...")
+    run_command(["uv", "pip", "install", "-e", "."])
+
+    # Install development dependencies
+    print("\nInstalling development dependencies...")
+    run_command(["uv", "pip", "install", "-e", ".[dev]"])
+
+    print("\nInstallation complete! You can now run the server with:")
+    print("  uv run mcportfolio/server/main.py")
+    print("or")
+    print("  uvicorn mcportfolio.server.main:asgi_app --host 0.0.0.0 --port 8001")
 
 
 if __name__ == "__main__":
