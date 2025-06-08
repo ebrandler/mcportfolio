@@ -40,6 +40,25 @@ The instructions help Claude to:
 - Check outputs against financial best practices
 - Give clear explanations of its optimization choices
 
+## An overview of classical portfolio optimization methods
+
+*Reproduced and adapted from [PyPortfolioOpt by robertmartin8](https://github.com/robertmartin8/PyPortfolioOpt?tab=readme-ov-file#an-overview-of-classical-portfolio-optimization-methods)*
+
+Harry Markowitz's 1952 paper is the undeniable classic, which turned portfolio optimization from an art into a science. The key insight is that by combining assets with different expected returns and volatilities, one can decide on a mathematically optimal allocation which minimises the risk for a target return – the set of all such optimal portfolios is referred to as the efficient frontier.
+
+![Efficient Frontier](https://github.com/robertmartin8/PyPortfolioOpt/blob/master/media/efficient_frontier_white.png?raw=true)
+
+Although much development has been made in the subject, more than half a century later, Markowitz's core ideas are still fundamentally important and see daily use in many portfolio management firms. The main drawback of mean-variance optimization is that the theoretical treatment requires knowledge of the expected returns and the future risk-characteristics (covariance) of the assets. Obviously, if we knew the expected returns of a stock life would be much easier, but the whole game is that stock returns are notoriously hard to forecast. As a substitute, we can derive estimates of the expected return and covariance based on historical data – though we do lose the theoretical guarantees provided by Markowitz, the closer our estimates are to the real values, the better our portfolio will be.
+
+Thus this project provides four major sets of functionality (though of course they are intimately related):
+
+- Estimates of expected returns
+- Estimates of risk (i.e covariance of asset returns)
+- Objective functions to be optimized
+- Optimizers
+
+A key design goal of PyPortfolioOpt is modularity – the user should be able to swap in their components while still making use of the framework that PyPortfolioOpt provides.
+
 ## Portfolio Optimization Examples
 
 The server provides two main endpoints for portfolio optimization. Here are comprehensive examples for different scenarios:
