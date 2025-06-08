@@ -3,7 +3,7 @@
 # MCPortfolioOptimizer - LLM-Driven Portfolio Optimization
 
 <p align="center">
-    <img src=".github/logo.png" width="500px" alt="MCPortfolioOptimizer">
+    <img src=".github/logo.git" width="500px" alt="MCPortfolioOptimizer">
 </p>
 
 This project gives a universal solver interface for Model-Constraint-Problem (MCP). It makes the [PyPortfolioOpt](https://pyportfolioopt.readthedocs.io/en/latest/) library's features available to Large Language Models (LLMs) through an MCP Server. The main goal is to let users work with advanced portfolio optimization using natural language, without writing code.
@@ -210,7 +210,7 @@ Maximum Expected Return: 10.8% annually
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/mcportfolio.git
+   git clone https://github.com/ebrandler/mcportfolio
    cd mcportfolio
    ```
 
