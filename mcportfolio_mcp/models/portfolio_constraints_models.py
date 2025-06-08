@@ -1,18 +1,17 @@
-from typing import List, Optional
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 
 class SectorConstraint(BaseModel):
     """Model for sector-specific portfolio constraints."""
     sector: str
-    min_weight: Optional[float] = None
-    max_weight: Optional[float] = None
-    tickers: List[str]
+    min_weight: float | None = None
+    max_weight: float | None = None
+    tickers: list[str]
 
 class PositionConstraint(BaseModel):
     """Model for position-specific constraints."""
     ticker: str
-    min_weight: Optional[float] = None
-    max_weight: Optional[float] = None
+    min_weight: float | None = None
+    max_weight: float | None = None
 
 class TurnoverConstraint(BaseModel):
     """Model for portfolio turnover constraints."""
@@ -21,7 +20,7 @@ class TurnoverConstraint(BaseModel):
 
 class RiskConstraint(BaseModel):
     """Model for risk-based constraints."""
-    max_volatility: Optional[float] = None
-    max_var: Optional[float] = None
-    max_cvar: Optional[float] = None
+    max_volatility: float | None = None
+    max_var: float | None = None
+    max_cvar: float | None = None
     confidence_level: float = Field(default=0.95, ge=0.0, le=1.0) 

@@ -1,12 +1,12 @@
-from typing import List, Optional, Dict, Any
+from typing import Any
 from pydantic import BaseModel, Field, ConfigDict
 
 class PortfolioProblem(BaseModel):
     """Base model for portfolio optimization problems."""
     description: str
-    tickers: Optional[List[str]] = None
-    constraints: Optional[List[str]] = None
-    objective: Optional[str] = None
-    parameters: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    tickers: list[str] | None = None
+    constraints: list[str] | None = None
+    objective: str | None = None
+    parameters: dict[str, Any] | None = Field(default_factory=dict)
 
     model_config = ConfigDict(arbitrary_types_allowed=True) 

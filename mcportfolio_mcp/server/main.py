@@ -25,7 +25,6 @@ from mcportfolio_mcp.solvers.portfolio_solver import (
     retrieve_stock_data,
     solve_problem as solve_portfolio_problem,
 )
-from starlette.responses import JSONResponse
 
 # Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
 
