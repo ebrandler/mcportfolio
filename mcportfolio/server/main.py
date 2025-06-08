@@ -402,3 +402,7 @@ def health_route() -> JSONResponse:
 
 # Expose the ASGI app for Uvicorn (HTTP/JSON-RPC transport)
 asgi_app = app.http_app()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("mcportfolio.server.main:asgi_app", host="0.0.0.0", port=8001, reload=True)

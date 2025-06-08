@@ -267,10 +267,23 @@ Maximum Expected Return: 10.8% annually
 
 ### Running the Server
 
-1. Start the server:
-   ```bash
-   uvicorn mcportfolio.server.main:app --host 0.0.0.0 --port 8001
-   ```
+You can start the server with either:
+
+```bash
+uv run mcportfolio/server/main.py
+```
+
+or
+
+```bash
+python mcportfolio/server/main.py
+```
+
+or
+
+```bash
+uvicorn mcportfolio.server.main:asgi_app --host 0.0.0.0 --port 8001
+```
 
 2. The server will be available at `http://localhost:8001`
 
