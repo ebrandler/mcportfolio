@@ -1,5 +1,5 @@
 [project]
-name = "mcportfolio_mcp"
+name = "mcportfolio"
 version = "0.1.0"
 description = "LLM-driven portfolio optimization with Model-Constraint-Problem (MCP) interface"
 author = "Edward Brandler"
@@ -17,8 +17,7 @@ dependencies = [
     "scipy==1.12.0",
     "yfinance==0.2.36",
     "matplotlib==3.8.2",
-    "scikit-learn==1.4.0",
-    "pyarrow"
+    "scikit-learn==1.4.0"
 ]
 
 [project.optional-dependencies]
@@ -40,10 +39,10 @@ build-backend = "hatchling.build"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=mcportfolio_mcp"
+addopts = "-v --cov=mcportfolio"
 
 [tool.coverage.run]
-source = ["mcportfolio_mcp"]
+source = ["mcportfolio"]
 omit = ["tests/*", "**/__init__.py"]
 
 [tool.ruff]
@@ -56,10 +55,13 @@ select = ["E", "F", "B", "N", "UP", "ANN", "RUF"]
 ignore = ["I001"]  # Ignore import sorting
 
 [tool.hatch.build.targets.wheel]
-packages = ["mcportfolio_mcp"]
+packages = ["mcportfolio"]
 
 [tool.hatch.build.targets.wheel.scripts]
-mcportfolio = "mcportfolio_mcp.server.main:main"
+mcportfolio = "mcportfolio.server.main:main"
 
 [project.scripts]
-mcportfolio = "mcportfolio_mcp.server.main:main"
+mcportfolio = "mcportfolio.server.main:main"
+[tool.hatch.build.hooks.custom]
+path = "tests.test_startup:run_tests"
+
