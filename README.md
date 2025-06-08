@@ -1,9 +1,9 @@
 // Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
 
-# MCPortfolioOptimizer - LLM-Driven Portfolio Optimization
+# McPortfolio - LLM-Driven Portfolio Optimization
 
 <p align="center">
-    <img src=".github/logo.png" width="500px" alt="MCPortfolioOptimizer">
+    <img src=".github/logo.png" width="500px" alt="McPortfolio">
 </p>
 
 This project allows users work with advanced portfolio optimization using natural language, without writing code. 
@@ -42,7 +42,7 @@ The LLM's ability to pick the right solver, parameters, and variables for an opt
 
 ## Claude Project Instructions
 
-To work well with Claude and use MCPortfolioOptimizer properly, add the contents of `docs/Claude_Project_Instructions.md` to your Claude project's knowledge section. These instructions give:
+To improve performance and use McPortfolio properly, add the contents of `docs/Claude_Project_Instructions.md` to your Claude project's knowledge section. These instructions give:
 
 1. A system prompt that guides Claude to use the MCP server well
 2. Clear rules on when and how to use the portfolio optimization tools
