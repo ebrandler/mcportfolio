@@ -3,6 +3,7 @@
 from typing import Any
 from ..models.portfolio_models import DiscreteAllocationProblem
 from .portfolio_solver import retrieve_stock_data
+from pypfopt.discrete_allocation import DiscreteAllocation  # , get_latest_prices
 
 def solve_discrete_allocation_problem(problem: DiscreteAllocationProblem) -> dict[str, Any]:
     """Solve a discrete allocation problem given weights, prices, and portfolio value."""
@@ -14,8 +15,6 @@ def solve_discrete_allocation_problem(problem: DiscreteAllocationProblem) -> dic
         prices = data['data']['prices']
         latest_prices = prices.iloc[-1]
         
-        # Import DiscreteAllocation from archive
-        from archive.pypfopt.discrete_allocation import DiscreteAllocation  # , get_latest_prices
         weights = problem.weights
         portfolio_value = problem.portfolio_value
         

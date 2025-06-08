@@ -27,7 +27,7 @@ def solve_hierarchical_portfolio_problem(problem: HierarchicalPortfolioProblem) 
         returns = prices.pct_change().dropna()
         
         # Import HRP from archive
-        from archive.pypfopt.hierarchical_portfolio import HRPOpt
+        from pypfopt.hierarchical_portfolio import HRPOpt
         hrp = HRPOpt(returns)
         weights = hrp.optimize()
         weights = {k: float(v) for k, v in weights.items()}

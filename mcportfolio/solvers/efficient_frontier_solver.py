@@ -15,7 +15,7 @@ def solve_efficient_frontier_problem(problem: EfficientFrontierProblem) -> dict[
         cov_matrix = data['data']['cov_matrix']
         
         # Import EfficientFrontier from archive
-        from archive.pypfopt.efficient_frontier import EfficientFrontier
+        from pypfopt.efficient_frontier import EfficientFrontier
         ef = EfficientFrontier(mean_returns, cov_matrix, weight_bounds=(problem.min_weight, problem.max_weight))
         # Optimize for maximum Sharpe ratio
         weights = ef.max_sharpe(risk_free_rate=problem.risk_free_rate)

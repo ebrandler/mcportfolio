@@ -10,10 +10,10 @@ import sys
 
 # import pandas as pd
 import numpy as np
-from mcportfolio_mcp.models.portfolio_models import EfficientFrontierProblem
-from mcportfolio_mcp.solvers.efficient_frontier_solver import solve_efficient_frontier_problem
-from mcportfolio_mcp.plotting.plotting_utils import plot_portfolio
-from archive.pypfopt.efficient_frontier import EfficientFrontier
+from mcportfolio.models.portfolio_models import EfficientFrontierProblem
+from mcportfolio.solvers.efficient_frontier_solver import solve_efficient_frontier_problem
+from mcportfolio.plotting.plotting_utils import plot_portfolio
+from pypfopt.efficient_frontier import EfficientFrontier
 
 # Configure logging
 logging.basicConfig(
@@ -60,7 +60,7 @@ def test_efficient_frontier() -> None:
         logger.info(f"Sharpe Ratio: {data['sharpe_ratio']:.2f}")
         
         # Create optimizer object for plotting
-        from mcportfolio_mcp.solvers.portfolio_solver import retrieve_stock_data
+        from mcportfolio.solvers.portfolio_solver import retrieve_stock_data
         market_data = retrieve_stock_data(tickers=tickers, period="2y")
         if market_data["status"] == "success":
             mean_returns = market_data["data"]["mean_returns"]

@@ -1,6 +1,6 @@
 import logging
-from mcportfolio_mcp.models.portfolio_models import DiscreteAllocationProblem
-from mcportfolio_mcp.solvers.discrete_allocation_solver import solve_discrete_allocation_problem
+from mcportfolio.models.portfolio_models import DiscreteAllocationProblem
+from mcportfolio.solvers.discrete_allocation_solver import solve_discrete_allocation_problem
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

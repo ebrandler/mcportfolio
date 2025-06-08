@@ -1,9 +1,9 @@
 import logging
-from mcportfolio_mcp.models.portfolio_black_litterman_models import BlackLittermanProblem, BlackLittermanView
-from mcportfolio_mcp.solvers.black_litterman_solver import solve_black_litterman_problem
+from mcportfolio.models.portfolio_black_litterman_models import BlackLittermanProblem, BlackLittermanView
+from mcportfolio.solvers.black_litterman_solver import solve_black_litterman_problem
 # import numpy as np
 import pandas as pd
-from mcportfolio_mcp.solvers.portfolio_solver import retrieve_stock_data
+from mcportfolio.solvers.portfolio_solver import retrieve_stock_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
