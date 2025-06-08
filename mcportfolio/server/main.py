@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from typing import Any
+from starlette.responses import JSONResponse
 
 from fastmcp import FastMCP
 from mcp.types import TextContent
@@ -395,67 +396,12 @@ app.tool("retrieve_stock_data")(retrieve_stock_data_tool)
 app.tool("solve_portfolio")(solve_portfolio_tool)
 app.tool("solve_black_litterman")(solve_black_litterman_tool)
 
-@app.tool(name="healthcheck", description="Check if the server is running")
-async def healthcheck() -> str:
-    return "Server is running"
+@app.custom_route("/health", methods=["GET"])
+def health_route(request):
+    return JSONResponse({"status": "ok"})
 
-def format_response(result: dict[str, Any] | list[Any] | str | int | float | bool | None) -> dict[str, Any]:
-    """Format the response as a proper JSON-RPC 2.0 response."""
-    return {
-        "jsonrpc": "2.0",
-        "result": result
-    }
+# Expose the ASGI app for Uvicorn (HTTP/JSON-RPC transport)
+asgi_app = app.http_app()
 
-def format_error(error: str) -> dict[str, Any]:
-    """Format an error as a proper JSON-RPC 2.0 error response."""
-    return {
-        "jsonrpc": "2.0",
-        "error": {
-            "code": -32000,
-            "message": error
-        }
-    }
-
-def handle_request(request: dict[str, Any]) -> dict[str, Any]:
-    """Handle an incoming request and return a properly formatted response."""
-    try:
-        method = request.get("method")
-        params = request.get("params", {})
-        
-        if method == "retrieve_stock_data":
-            result = retrieve_stock_data(**params)
-            return format_response(result)
-        elif method == "solve_portfolio":
-            result = solve_portfolio_tool(**params)
-            return format_response(result)
-        elif method == "solve_black_litterman":
-            result = solve_black_litterman_tool(**params)
-            return format_response(result)
-        else:
-            return format_error(f"Unknown method: {method}")
-            
-    except Exception as e:
-        logger.error(f"Error handling request: {e!s}", exc_info=True)
-        return format_error(str(e))
-
-# The main() function should only call app.run()
-def main() -> None:
-    """Start the MCP server."""
-    logger.info("Starting mcportfolio MCP server...")
-    
-    # Run startup tests
-    try:
-        from tests.test_startup import run_tests
-        if not run_tests():
-            logger.error("Startup tests failed. Server will not start.")
-            sys.exit(1)
-        logger.info("Startup tests passed successfully.")
-    except Exception as e:
-        logger.error(f"Error running startup tests: {e}")
-        sys.exit(1)
-    
-    app.run()
-
-
-if __name__ == "__main__":
-    main()
+# Expose the ASGI app for Uvicorn (SSE transport)
+asgi_app = app.sse_app()
