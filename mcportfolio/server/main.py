@@ -402,6 +402,3 @@ def health_route() -> JSONResponse:
 
 # Expose the ASGI app for Uvicorn (HTTP/JSON-RPC transport)
 asgi_app = app.http_app()
-
-# Expose the ASGI app for Uvicorn (SSE transport)
-asgi_app = app.sse_app()
