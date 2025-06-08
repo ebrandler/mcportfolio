@@ -243,6 +243,14 @@ uv run install.py
 
 This will install all dependencies and development tools.
 
+To uninstall the project:
+
+```bash
+uv run uninstall.py
+```
+
+This will remove the project and clean up build artifacts.
+
 ### Prerequisites
 
 - Python 3.12 or higher
