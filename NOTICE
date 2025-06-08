@@ -1,0 +1,17 @@
+MCPortfolioOptimizer
+Copyright 2025, Edward Brandler
+
+This project uses code from these third-party projects:
+
+1. PyPortfolioOpt
+   Copyright (c) 2018 Robert Andrew Martin
+   Licensed under the MIT License
+   https://pyportfolioopt.readthedocs.io/en/latest/
+
+2. USolver
+   Copyright 2025, Stephen Diehl
+   Licensed under the Apache License, Version 2.0
+   https://github.com/sdiehl/usolver
+
+The MIT License text is in licenses/LICENSE_MIT.txt
+The Apache License 2.0 text is in licenses/LICENSE_APACHE.txt 

@@ -1,0 +1,65 @@
+[project]
+name = "mcportfolio_mcp"
+version = "0.1.0"
+description = "LLM-driven portfolio optimization with Model-Constraint-Problem (MCP) interface"
+author = "Edward Brandler"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "Apache-2.0"}
+dependencies = [
+    "pydantic>=2.7.2",
+    "returns==0.20.0",
+    "fastmcp>=2.7.0",
+    "cvxpy==1.4.1",
+    "pyportfolioopt==1.5.5",
+    "pandas==2.2.0",
+    "numpy==1.26.3",
+    "scipy==1.12.0",
+    "yfinance==0.2.36",
+    "matplotlib==3.8.2",
+    "scikit-learn==1.4.0",
+    "pyarrow"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black==25.1.0",
+    "ruff==0.11.2",
+    "pytest==7.4.4",
+    "flake8==7.0.0",
+    "jupyterlab==4.1.0",
+    "ipykernel==6.29.0",
+    "jedi==0.19.1",
+    "pytest-cov==4.1.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=mcportfolio_mcp"
+
+[tool.coverage.run]
+source = ["mcportfolio_mcp"]
+omit = ["tests/*", "**/__init__.py"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "N", "UP", "ANN", "RUF"]
+ignore = ["I001"]  # Ignore import sorting
+
+[tool.hatch.build.targets.wheel]
+packages = ["mcportfolio_mcp"]
+
+[tool.hatch.build.targets.wheel.scripts]
+mcportfolio = "mcportfolio_mcp.server.main:main"
+
+[project.scripts]
+mcportfolio = "mcportfolio_mcp.server.main:main"
