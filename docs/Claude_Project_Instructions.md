@@ -1,6 +1,6 @@
 # Claude Project Instructions
 
-This document tells you how to use MCPortfolioOptimizer with Claude.
+// To make best use of this project in the Claude desktop client, go to projects > Project knowledge & paste the contents below directly into Claude's Project Knowledge section.
 
 ## Available Solvers
 
