@@ -7,6 +7,16 @@ from pypfopt.cla import CLA
 from pypfopt.efficient_frontier import EfficientFrontier
 from pypfopt.plotting import plot_efficient_frontier, plot_weights
 
+# Monkey-patch pypfopt.plotting to use the correct style for matplotlib >=3.6
+import pypfopt.plotting
+try:
+    plt.style.use("seaborn-v0_8-deep")
+except OSError:
+    plt.style.use("seaborn-deep")
+
+# Patch the style in pypfopt.plotting as well
+pypfopt.plotting.plt.style.use = plt.style.use
+
 
 class PlotKwargs(TypedDict, total=False):
     show_assets: bool
