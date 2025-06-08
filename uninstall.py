@@ -32,7 +32,7 @@ def main() -> None:
 
     # Uninstall the project
     print(f"Uninstalling {project_name}...")
-    run_command(["uv", "pip", "uninstall", "-y", project_name])
+    run_command(["uv", "pip", "uninstall", project_name])
 
     # Clean up any remaining build artifacts
     print("\nCleaning up build artifacts...")
