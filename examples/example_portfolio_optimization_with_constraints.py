@@ -14,8 +14,8 @@ with the following features:
 
 import logging
 import sys
-from mcportfolio_mcp.models.portfolio_models import PortfolioProblem
-from mcportfolio_mcp.solvers.portfolio_solver import solve_problem
+from mcportfolio.models.portfolio_models import PortfolioProblem
+from mcportfolio.solvers.portfolio_solver import solve_problem
 
 # Configure logging
 logging.basicConfig(

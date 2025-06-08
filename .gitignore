@@ -129,3 +129,5 @@ test_results/
 coverage.xml
 htmlcov/
 
+.ruff_cache/
+
