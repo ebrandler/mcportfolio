@@ -1,6 +1,6 @@
 import logging
-from mcportfolio_mcp.models.portfolio_models import CLAProblem
-from mcportfolio_mcp.solvers.cla_solver import solve_cla_problem
+from mcportfolio.models.portfolio_models import CLAProblem
+from mcportfolio.solvers.cla_solver import solve_cla_problem
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

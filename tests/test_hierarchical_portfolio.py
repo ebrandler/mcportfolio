@@ -1,6 +1,6 @@
 import logging
-from mcportfolio_mcp.models.portfolio_models import HierarchicalPortfolioProblem
-from mcportfolio_mcp.solvers.hierarchical_portfolio_solver import solve_hierarchical_portfolio_problem
+from mcportfolio.models.portfolio_models import HierarchicalPortfolioProblem
+from mcportfolio.solvers.hierarchical_portfolio_solver import solve_hierarchical_portfolio_problem
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

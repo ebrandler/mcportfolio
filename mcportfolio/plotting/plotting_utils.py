@@ -3,9 +3,9 @@ from typing import TypedDict
 
 import matplotlib.pyplot as plt
 
-from archive.pypfopt.cla import CLA
-from archive.pypfopt.efficient_frontier import EfficientFrontier
-from archive.pypfopt.plotting import plot_efficient_frontier, plot_weights
+from pypfopt.cla import CLA
+from pypfopt.efficient_frontier import EfficientFrontier
+from pypfopt.plotting import plot_efficient_frontier, plot_weights
 
 
 class PlotKwargs(TypedDict, total=False):

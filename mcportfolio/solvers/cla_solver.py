@@ -24,7 +24,7 @@ def solve_cla_problem(problem: CLAProblem) -> dict[str, Any]:
         cov_matrix = data['data']['cov_matrix']
         
         # Import CLA from archive
-        from archive.pypfopt.cla import CLA
+        from pypfopt.cla import CLA
         cla = CLA(mean_returns, cov_matrix, weight_bounds=(problem.min_weight, problem.max_weight))
         cla.max_sharpe()
         weights = {ticker: float(cla.weights[i]) for i, ticker in enumerate(problem.tickers)}

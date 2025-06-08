@@ -62,6 +62,4 @@ mcportfolio = "mcportfolio.server.main:main"
 
 [project.scripts]
 mcportfolio = "mcportfolio.server.main:main"
-[tool.hatch.build.hooks.custom]
-path = "tests.test_startup:run_tests"
 
