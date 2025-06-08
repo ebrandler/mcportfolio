@@ -1,1 +1,14 @@
-pyarrow 
+cvxpy
+numpy
+pandas
+pyportfolioopt
+yfinance
+pydantic
+returns
+starlette
+uvicorn
+fastmcp
+scipy
+pyarrow
+requests
+ruff
