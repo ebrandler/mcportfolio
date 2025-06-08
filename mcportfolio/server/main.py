@@ -397,7 +397,7 @@ app.tool("solve_portfolio")(solve_portfolio_tool)
 app.tool("solve_black_litterman")(solve_black_litterman_tool)
 
 @app.custom_route("/health", methods=["GET"])
-def health_route(request):
+def health_route() -> JSONResponse:
     return JSONResponse({"status": "ok"})
 
 # Expose the ASGI app for Uvicorn (HTTP/JSON-RPC transport)
