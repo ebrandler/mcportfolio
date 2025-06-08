@@ -6,7 +6,23 @@
     <img src=".github/logo.png" width="500px" alt="MCPortfolioOptimizer">
 </p>
 
-This project gives a universal solver interface for Model-Constraint-Problem (MCP). It makes the [PyPortfolioOpt](https://pyportfolioopt.readthedocs.io/en/latest/) library's features available to Large Language Models (LLMs) through an MCP Server. The main goal is to let users work with advanced portfolio optimization using natural language, without writing code.
+This project allows users work with advanced portfolio optimization using natural language, without writing code. 
+
+**Overview of Portfolio Optimizers:**
+
+Portfolio optimizers are algorithms and mathematical tools designed to help investors allocate their capital among different assets in a way that balances risk and return. The most common approaches include:
+
+- **Mean-Variance Optimization (Markowitz):** Finds the portfolio with the lowest risk for a given expected return, or the highest return for a given risk, based on historical means and covariances.
+- **Maximum Sharpe Ratio:** Seeks the portfolio with the best risk-adjusted return, maximizing the Sharpe ratio.
+- **Minimum Volatility:** Focuses on constructing the portfolio with the lowest possible volatility.
+- **Efficient Frontier:** The set of optimal portfolios that offer the highest expected return for a defined level of risk.
+- **Black-Litterman Model:** Combines market equilibrium with investor views to produce more stable and realistic portfolios.
+- **Hierarchical Risk Parity (HRP):** Uses clustering algorithms to build diversified portfolios that are robust to estimation errors.
+- **Mean-CVaR and Mean-Semivariance:** Alternative risk measures that focus on downside risk or tail risk, rather than standard deviation.
+
+These optimizers allow users to tailor their portfolios to their specific risk tolerance, investment goals, and market views.
+
+It gives a universal solver interface for Model-Constraint-Problem (MCP). It makes the [PyPortfolioOpt](https://pyportfolioopt.readthedocs.io/en/latest/) library's features available to Large Language Models (LLMs) through an MCP Server. The main goal is to let .
 
 This project builds on the open-source [USolver](https://github.com/sdiehl/usolver) project, which gives a Model Context Protocol server with tools for different optimization problems. Through USolver, this project works with this powerful solver:
 
