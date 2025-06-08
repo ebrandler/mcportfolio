@@ -4,7 +4,7 @@ import cvxpy as cp
 import numpy as np
 from returns.result import Failure, Result, Success
 
-from mcportfolio_mcp.models.cvxpy_models import (
+from mcportfolio.models.cvxpy_models import (
     # CVXPYVariable,
     # CVXPYConstraint,
     # CVXPYObjective,

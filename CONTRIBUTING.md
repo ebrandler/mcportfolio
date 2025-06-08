@@ -73,7 +73,7 @@ Thank you for your interest in contributing to MCPortfolio! This document provid
 - Maintain or improve test coverage
 - Run tests before submitting a pull request:
   ```bash
-  pytest --cov=mcportfolio_mcp
+  pytest --cov=mcportfolio
   ```
 
 ## Documentation

@@ -269,7 +269,7 @@ Maximum Expected Return: 10.8% annually
 
 1. Start the server:
    ```bash
-   uvicorn mcportfolio_mcp.server.main:app --host 0.0.0.0 --port 8001
+   uvicorn mcportfolio.server.main:app --host 0.0.0.0 --port 8001
    ```
 
 2. The server will be available at `http://localhost:8001`
@@ -347,10 +347,10 @@ pre-commit run --all-files
 
 Run tests with coverage:
 ```bash
-pytest --cov=mcportfolio_mcp
+pytest --cov=mcportfolio
 ```
 
 Generate coverage report:
 ```bash
-pytest --cov=mcportfolio_mcp --cov-report=html
+pytest --cov=mcportfolio --cov-report=html
 ```

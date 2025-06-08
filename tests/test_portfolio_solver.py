@@ -1,5 +1,5 @@
 import unittest
-from mcportfolio_mcp.solvers.portfolio_solver import retrieve_stock_data
+from mcportfolio.solvers.portfolio_solver import retrieve_stock_data
 
 class TestPortfolioSolver(unittest.TestCase):
     def setUp(self) -> None:

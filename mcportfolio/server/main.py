@@ -8,20 +8,20 @@ from fastmcp import FastMCP
 from mcp.types import TextContent
 from returns.result import Failure, Success
 
-from mcportfolio_mcp.models.cvxpy_models import (
+from mcportfolio.models.cvxpy_models import (
     CVXPYConstraint,
     CVXPYObjective,
     CVXPYProblem,
     CVXPYVariable,
 )
-from mcportfolio_mcp.models.portfolio_base_models import PortfolioProblem
-from mcportfolio_mcp.models.portfolio_black_litterman_models import (
+from mcportfolio.models.portfolio_base_models import PortfolioProblem
+from mcportfolio.models.portfolio_black_litterman_models import (
     BlackLittermanProblem,
     BlackLittermanView,
 )
-from mcportfolio_mcp.solvers.black_litterman_solver import solve_black_litterman_problem
-from mcportfolio_mcp.solvers.cvxpy_solver import solve_cvxpy_problem
-from mcportfolio_mcp.solvers.portfolio_solver import (
+from mcportfolio.solvers.black_litterman_solver import solve_black_litterman_problem
+from mcportfolio.solvers.cvxpy_solver import solve_cvxpy_problem
+from mcportfolio.solvers.portfolio_solver import (
     retrieve_stock_data,
     solve_problem as solve_portfolio_problem,
 )

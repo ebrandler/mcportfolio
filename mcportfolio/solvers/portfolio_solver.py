@@ -11,7 +11,7 @@ import numpy as np
 import logging
 import sys
 
-from mcportfolio_mcp.models.portfolio_base_models import PortfolioProblem
+from mcportfolio.models.portfolio_base_models import PortfolioProblem
 
 # Configure logging to stderr
 logging.basicConfig(

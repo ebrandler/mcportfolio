@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-SERVER_NAME = "mcportfolio_mcp"
+SERVER_NAME = "mcportfolio"
 
 
 def get_config_paths() -> tuple[Path, Path]:
@@ -83,7 +83,7 @@ def install_to_config(config_path: Path, script_dir: Path, server_name: str) -> 
             "run",
             "--directory",
             str(script_dir),
-            "mcportfolio_mcp/server/main.py",
+            "mcportfolio/server/main.py",
         ],
     }
 

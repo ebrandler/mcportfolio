@@ -2,7 +2,7 @@
 import numpy as np
 from returns.result import Failure, Success
 
-from mcportfolio_mcp.models.cvxpy_models import (
+from mcportfolio.models.cvxpy_models import (
     CVXPYVariable as Variable,
     CVXPYConstraint as Constraint,
     CVXPYObjective as Objective,
@@ -12,7 +12,7 @@ from mcportfolio_mcp.models.cvxpy_models import (
     # Failure,
     ObjectiveType,
 )
-from mcportfolio_mcp.solvers.cvxpy_solver import solve_cvxpy_problem
+from mcportfolio.solvers.cvxpy_solver import solve_cvxpy_problem
 
 # Problem data
 m = 30
