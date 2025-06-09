@@ -16,9 +16,7 @@ dependencies = [
     "numpy==1.26.3",
     "scipy==1.12.0",
     "yfinance==0.2.36",
-    "matplotlib==3.8.2",
-    "scikit-learn==1.4.0",
-    "seaborn>=0.12.0"
+    "matplotlib==3.8.2"
 ]
 
 [project.optional-dependencies]
@@ -57,9 +55,6 @@ ignore = ["I001"]  # Ignore import sorting
 
 [tool.hatch.build.targets.wheel]
 packages = ["mcportfolio"]
-
-[tool.hatch.build.targets.wheel.scripts]
-mcportfolio = "mcportfolio.server.main:main"
 
 [project.scripts]
 mcportfolio = "mcportfolio.server.main:main"
