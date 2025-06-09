@@ -30,10 +30,8 @@ def check_python_version() -> bool:
         print("   4. Or use uv: uv python install 3.12")
         return False
 
-    print(
-        f"SUCCESS: Python version {current_version.major}.{current_version.minor}."
-        f"{current_version.micro} meets requirements"
-    )
+    version_str = f"{current_version.major}.{current_version.minor}.{current_version.micro}"
+    print(f"SUCCESS: Python version {version_str} meets requirements")
     return True
 
 
@@ -198,8 +196,9 @@ def main() -> None:
     # Test that the server can be imported
     print("\nTesting server installation...")
     try:
+        import_cmd = "import mcportfolio.server.main; print('SUCCESS: Server import successful')"
         result = run_command(
-            ["uv", "run", "python", "-c", "import mcportfolio.server.main; print('SUCCESS: Server import successful')"],
+            ["uv", "run", "python", "-c", import_cmd],
             check_exit=False,
         )
         if result.returncode != 0:
