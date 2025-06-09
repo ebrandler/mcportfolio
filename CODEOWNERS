@@ -1,0 +1,7 @@
+# CODEOWNERS file for mcportfolio repository
+# This file defines who owns different parts of the codebase
+# For more information about CODEOWNERS files, see:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owner - @ebrandler owns all files in the repository
+* @ebrandler
