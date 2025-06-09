@@ -1,5 +1,6 @@
 # Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
 from typing import Any
+from datetime import datetime, timedelta
 
 # import json
 import pandas as pd
@@ -14,6 +15,14 @@ import logging
 import sys
 
 from mcportfolio.models.portfolio_base_models import PortfolioProblem
+
+# Alternative data sources
+try:
+    import pandas_datareader as pdr
+    PANDAS_DATAREADER_AVAILABLE = True
+except ImportError:
+    PANDAS_DATAREADER_AVAILABLE = False
+    pdr = None
 
 # Configure logging to stderr
 logging.basicConfig(
@@ -35,6 +44,141 @@ def extract_tickers(task: str) -> list[str]:
     """
     words = task.upper().split()
     return [word.strip(",") for word in words if word.isalpha() and 2 <= len(word) <= 5]
+
+
+def _get_data_from_stooq(tickers: list[str], period: str = "1y") -> tuple[pd.DataFrame | None, str]:
+    """Fetch data from Stooq via pandas-datareader."""
+    if not PANDAS_DATAREADER_AVAILABLE:
+        return None, "pandas-datareader not available"
+
+    try:
+        logger.info("Trying Stooq data source...")
+
+        # Convert period to start/end dates
+        end_date = datetime.now()
+        period_days = {
+            "1d": 1, "5d": 5, "1mo": 30, "3mo": 90, "6mo": 180,
+            "1y": 365, "2y": 730, "5y": 1825, "10y": 3650, "ytd": 200, "max": 3650
+        }
+        days = period_days.get(period, 365)
+        start_date = end_date - timedelta(days=days)
+
+        # Fetch data for each ticker
+        data_frames = []
+        for ticker in tickers:
+            try:
+                # Stooq uses different format - add .US suffix for US stocks
+                stooq_ticker = f"{ticker}.US"
+                ticker_data = pdr.get_data_stooq(stooq_ticker, start=start_date, end=end_date)
+                if not ticker_data.empty:
+                    # Rename columns to match yfinance format
+                    ticker_data.columns = [f"{col}_{ticker}" for col in ticker_data.columns]
+                    data_frames.append(ticker_data)
+                else:
+                    logger.warning(f"No data from Stooq for {ticker}")
+            except Exception as e:
+                logger.warning(f"Stooq failed for {ticker}: {e}")
+                continue
+
+        if data_frames:
+            # Combine all ticker data
+            combined_data = pd.concat(data_frames, axis=1)
+
+            # Restructure to match yfinance multi-index format
+            price_data = {}
+            for col in ['Open', 'High', 'Low', 'Close']:
+                price_data[col] = pd.DataFrame({
+                    ticker: combined_data[f"{col}_{ticker}"]
+                    for ticker in tickers
+                    if f"{col}_{ticker}" in combined_data.columns
+                })
+
+            # Create MultiIndex columns like yfinance
+            if price_data:
+                result = pd.concat(price_data, axis=1)
+                logger.info(f"Stooq data retrieved - shape: {result.shape}")
+                return result, ""
+
+        return None, "No data retrieved from Stooq"
+
+    except Exception as e:
+        logger.warning(f"Stooq data source failed: {e}")
+        return None, f"Stooq error: {e}"
+
+
+def _get_data_from_tiingo(tickers: list[str], period: str = "1y") -> tuple[pd.DataFrame | None, str]:
+    """Fetch data from Tiingo via pandas-datareader (requires API key)."""
+    if not PANDAS_DATAREADER_AVAILABLE:
+        return None, "pandas-datareader not available"
+
+    try:
+        logger.info("Trying Tiingo data source...")
+
+        # Convert period to start/end dates
+        end_date = datetime.now()
+        period_days = {
+            "1d": 1, "5d": 5, "1mo": 30, "3mo": 90, "6mo": 180,
+            "1y": 365, "2y": 730, "5y": 1825, "10y": 3650, "ytd": 200, "max": 3650
+        }
+        days = period_days.get(period, 365)
+        start_date = end_date - timedelta(days=days)
+
+        # Note: Tiingo requires API key in environment variable TIINGO_API_KEY
+        data = pdr.get_data_tiingo(tickers, start=start_date, end=end_date)
+
+        if data is not None and not data.empty:
+            logger.info(f"Tiingo data retrieved - shape: {data.shape}")
+            return data, ""
+        else:
+            return None, "No data retrieved from Tiingo"
+
+    except Exception as e:
+        logger.warning(f"Tiingo data source failed: {e}")
+        return None, f"Tiingo error: {e}"
+
+
+def _get_data_from_fred(tickers: list[str], period: str = "1y") -> tuple[pd.DataFrame | None, str]:
+    """Fetch data from FRED (Federal Reserve Economic Data) - mainly for economic indicators."""
+    if not PANDAS_DATAREADER_AVAILABLE:
+        return None, "pandas-datareader not available"
+
+    try:
+        logger.info("Trying FRED data source...")
+
+        # Convert period to start/end dates
+        end_date = datetime.now()
+        period_days = {
+            "1d": 1, "5d": 5, "1mo": 30, "3mo": 90, "6mo": 180,
+            "1y": 365, "2y": 730, "5y": 1825, "10y": 3650, "ytd": 200, "max": 3650
+        }
+        days = period_days.get(period, 365)
+        start_date = end_date - timedelta(days=days)
+
+        # FRED is mainly for economic data, not individual stocks
+        # This is more useful for market indices or economic indicators
+        # Common FRED series: 'SP500', 'DEXUSEU', 'DGS10', etc.
+        fred_tickers = []
+        for ticker in tickers:
+            # Map common tickers to FRED series
+            fred_mapping = {
+                'SPY': 'SP500',  # S&P 500
+                'QQQ': 'NASDAQCOM',  # NASDAQ
+                # Add more mappings as needed
+            }
+            if ticker in fred_mapping:
+                fred_tickers.append(fred_mapping[ticker])
+
+        if fred_tickers:
+            data = pdr.get_data_fred(fred_tickers, start=start_date, end=end_date)
+            if data is not None and not data.empty:
+                logger.info(f"FRED data retrieved - shape: {data.shape}")
+                return data, ""
+
+        return None, "No FRED data available for these tickers"
+
+    except Exception as e:
+        logger.warning(f"FRED data source failed: {e}")
+        return None, f"FRED error: {e}"
 
 
 
@@ -94,6 +238,33 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
             except Exception as e:
                 error_messages.append(f"Individual download failed: {e}")
                 logger.warning(f"Individual download failed: {e}")
+
+        # Approach 3: Try Stooq via pandas-datareader
+        if data is None or data.empty:
+            stooq_data, stooq_error = _get_data_from_stooq(tickers, period)
+            if stooq_data is not None and not stooq_data.empty:
+                data = stooq_data
+                logger.info(f"Stooq data retrieved - shape: {data.shape}")
+            else:
+                error_messages.append(f"Stooq failed: {stooq_error}")
+
+        # Approach 4: Try Tiingo (requires API key)
+        if data is None or data.empty:
+            tiingo_data, tiingo_error = _get_data_from_tiingo(tickers, period)
+            if tiingo_data is not None and not tiingo_data.empty:
+                data = tiingo_data
+                logger.info(f"Tiingo data retrieved - shape: {data.shape}")
+            else:
+                error_messages.append(f"Tiingo failed: {tiingo_error}")
+
+        # Approach 5: Try FRED for market indices
+        if data is None or data.empty:
+            fred_data, fred_error = _get_data_from_fred(tickers, period)
+            if fred_data is not None and not fred_data.empty:
+                data = fred_data
+                logger.info(f"FRED data retrieved - shape: {data.shape}")
+            else:
+                error_messages.append(f"FRED failed: {fred_error}")
 
         # If all real data sources fail, return clear error
         if data is None or data.empty:
