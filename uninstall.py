@@ -3,6 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run_command(cmd: list[str]) -> None:
     """Run a command and print its output."""
     print(f"Running: {' '.join(cmd)}")
@@ -11,6 +12,7 @@ def run_command(cmd: list[str]) -> None:
         print(f"Error: {result.stderr}")
         sys.exit(1)
     print(result.stdout)
+
 
 def main() -> None:
     """Uninstall project dependencies and cleanup."""
@@ -23,6 +25,7 @@ def main() -> None:
     # Get project name from pyproject.toml
     try:
         import tomli
+
         with open("pyproject.toml", "rb") as f:
             pyproject = tomli.load(f)
             project_name = pyproject["project"]["name"]
@@ -41,5 +44,6 @@ def main() -> None:
 
     print("\nUninstallation complete!")
 
+
 if __name__ == "__main__":
-    main() 
+    main()

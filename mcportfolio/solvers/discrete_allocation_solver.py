@@ -5,31 +5,23 @@ from ..models.portfolio_models import DiscreteAllocationProblem
 from .portfolio_solver import retrieve_stock_data
 from pypfopt.discrete_allocation import DiscreteAllocation  # , get_latest_prices
 
+
 def solve_discrete_allocation_problem(problem: DiscreteAllocationProblem) -> dict[str, Any]:
     """Solve a discrete allocation problem given weights, prices, and portfolio value."""
     try:
         # Retrieve latest prices
         data = retrieve_stock_data(tickers=problem.tickers, period="5d")
-        if data.get('status') == 'error':
+        if data.get("status") == "error":
             return data
-        prices = data['data']['prices']
+        prices = data["data"]["prices"]
         latest_prices = prices.iloc[-1]
-        
+
         weights = problem.weights
         portfolio_value = problem.portfolio_value
-        
+
         da = DiscreteAllocation(weights, latest_prices, total_portfolio_value=portfolio_value)
         allocation, leftover = da.lp_portfolio()
-        
-        return {
-            "status": "success",
-            "data": {
-                "allocation": allocation,
-                "leftover": leftover
-            }
-        }
+
+        return {"status": "success", "data": {"allocation": allocation, "leftover": leftover}}
     except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Error in Discrete Allocation: {e!s}"
-        } 
+        return {"status": "error", "message": f"Error in Discrete Allocation: {e!s}"}
