@@ -623,3 +623,6 @@ pytest --cov=mcportfolio --cov-report=html
 - `sector_tech 0.4` - Tech sector ≤ 40%
 
 For detailed examples and advanced usage, see the [Portfolio Optimization Examples](#portfolio-optimization-examples) section above.
+
+---
+*Test comment: This line added to verify GitHub account attribution in PR creation.*
