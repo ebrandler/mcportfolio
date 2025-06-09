@@ -30,9 +30,7 @@ def create_variable(name: str, shape: int | tuple[int, ...]) -> cp.Variable:
     return cp.Variable(shape, name=name)
 
 
-def parse_expression(
-    expr_str: str, variables: dict[str, cp.Variable], params: dict[str, Any]
-) -> CVXPYExpr:
+def parse_expression(expr_str: str, variables: dict[str, cp.Variable], params: dict[str, Any]) -> CVXPYExpr:
     """Parse a CVXPY expression string.
 
     Args:
@@ -71,9 +69,7 @@ def solve_cvxpy_problem(problem: CVXPYProblem) -> Result[CVXPYSolution, str]:
             variables[var.name] = create_variable(var.name, var.shape)
 
         # Parse objective
-        objective_expr = parse_expression(
-            problem.objective.expression, variables, problem.parameters
-        )
+        objective_expr = parse_expression(problem.objective.expression, variables, problem.parameters)
         objective = (
             cp.Minimize(objective_expr)
             if problem.objective.type == ObjectiveType.MINIMIZE
@@ -83,9 +79,7 @@ def solve_cvxpy_problem(problem: CVXPYProblem) -> Result[CVXPYSolution, str]:
         # Parse constraints
         constraints = []
         for _i, constraint in enumerate(problem.constraints):
-            constraint_expr = parse_expression(
-                constraint.expression, variables, problem.parameters
-            )
+            constraint_expr = parse_expression(constraint.expression, variables, problem.parameters)
             constraints.append(constraint_expr)
 
         # Create and solve the problem

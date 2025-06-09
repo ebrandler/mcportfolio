@@ -21,7 +21,7 @@ class DiscreteAllocationProblem(BaseModel):
     description: str
     tickers: list[str]
     weights: dict[str, float]
-    portfolio_value: float 
+    portfolio_value: float
 
 
 class EfficientFrontierProblem(BaseModel):
@@ -29,4 +29,4 @@ class EfficientFrontierProblem(BaseModel):
     tickers: list[str]
     min_weight: float = 0.0
     max_weight: float = 1.0
-    risk_free_rate: float = 0.0 
+    risk_free_rate: float = 0.0

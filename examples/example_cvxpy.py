@@ -24,9 +24,7 @@ b = np.random.randn(m)
 # Define the optimization problem
 problem = Problem(
     variables=[Variable(name="x", shape=n)],  # n-dimensional vector
-    objective=Objective(
-        type=ObjectiveType.MINIMIZE, expression="cp.sum_squares(A @ x - b)"
-    ),
+    objective=Objective(type=ObjectiveType.MINIMIZE, expression="cp.sum_squares(A @ x - b)"),
     constraints=[
         Constraint(expression="0 <= x"),
         Constraint(expression="x <= 1"),
