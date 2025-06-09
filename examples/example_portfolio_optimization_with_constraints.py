@@ -19,11 +19,10 @@ from mcportfolio.solvers.portfolio_solver import solve_problem
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    stream=sys.stderr
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", stream=sys.stderr
 )
 logger = logging.getLogger(__name__)
+
 
 def main() -> None:
     # Define the portfolio problem
@@ -31,15 +30,15 @@ def main() -> None:
         description="Optimize portfolio of diverse stocks",
         tickers=["NVDA", "JPM", "UNH", "TSLA", "AMD", "JNJ", "V", "MA"],
         constraints=["max_weight 0.5"],  # 50% maximum weight per stock
-        objective="maximize_sharpe_ratio"
+        objective="maximize_sharpe_ratio",
     )
-    
+
     # Solve the portfolio optimization problem
     result = solve_problem(problem)
-    
+
     if result["status"] == "success":
         data = result["data"]
-        
+
         # Display optimal portfolio
         logger.info("\nOptimal Portfolio (Max Sharpe Ratio):")
         logger.info("----------------------------------------")
@@ -48,7 +47,7 @@ def main() -> None:
         logger.info(f"\nExpected Annual Return: {data['expected_return']:.2%}")
         logger.info(f"Annual Volatility: {data['risk']:.2%}")
         logger.info(f"Sharpe Ratio: {data['sharpe_ratio']:.2f}")
-        
+
         # Display minimum variance portfolio
         min_var = data["min_variance_portfolio"]
         logger.info("\nMinimum Variance Portfolio:")
@@ -57,7 +56,7 @@ def main() -> None:
             logger.info(f"{ticker}: {weight:.2%}")
         logger.info(f"\nExpected Annual Return: {min_var['expected_return']:.2%}")
         logger.info(f"Annual Volatility: {min_var['risk']:.2%}")
-        
+
         # Display maximum return portfolio
         max_ret = data["max_return_portfolio"]
         logger.info("\nMaximum Return Portfolio:")
@@ -69,5 +68,6 @@ def main() -> None:
     else:
         logger.error(f"Error: {result['message']}")
 
+
 if __name__ == "__main__":
-    main() 
+    main()

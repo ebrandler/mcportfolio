@@ -30,7 +30,10 @@ def check_python_version() -> bool:
         print("   4. Or use uv: uv python install 3.12")
         return False
 
-    print(f"SUCCESS: Python version {current_version.major}.{current_version.minor}.{current_version.micro} meets requirements")
+    print(
+        f"SUCCESS: Python version {current_version.major}.{current_version.minor}."
+        f"{current_version.micro} meets requirements"
+    )
     return True
 
 
@@ -57,10 +60,7 @@ def get_config_paths() -> tuple[Path, Path]:
     system = platform.system()
 
     if system == "Darwin":  # macOS
-        claude_config = (
-            Path.home()
-            / "Library/Application Support/Claude/claude_desktop_config.json"
-        )
+        claude_config = Path.home() / "Library/Application Support/Claude/claude_desktop_config.json"
         cursor_config = Path.home() / ".cursor/mcp.json"
     elif system == "Windows":
         appdata = os.environ.get("APPDATA", "")
@@ -198,7 +198,10 @@ def main() -> None:
     # Test that the server can be imported
     print("\nTesting server installation...")
     try:
-        result = run_command(["uv", "run", "python", "-c", "import mcportfolio.server.main; print('SUCCESS: Server import successful')"], check_exit=False)
+        result = run_command(
+            ["uv", "run", "python", "-c", "import mcportfolio.server.main; print('SUCCESS: Server import successful')"],
+            check_exit=False,
+        )
         if result.returncode != 0:
             print("ERROR: Server import test failed. Dependencies may not be properly installed.")
             print("   You may need to check your Python environment or dependencies.")
@@ -210,11 +213,11 @@ def main() -> None:
     # Get config paths
     claude_config, cursor_config = get_config_paths()
 
-    print(f"\nMCP Server configuration options:")
+    print("\nMCP Server configuration options:")
     print(f"   1. Claude Desktop config: {claude_config}")
     print(f"   2. Cursor config: {cursor_config}")
-    print(f"   3. Both")
-    print(f"   4. Skip MCP configuration")
+    print("   3. Both")
+    print("   4. Skip MCP configuration")
 
     while True:
         choice = input("\nWhich configuration would you like to install? (1-4): ").strip()
@@ -254,18 +257,18 @@ def main() -> None:
     if choice != "4":
         if success_count > 0:
             print(f"SUCCESS: {success_count} MCP configuration(s) updated")
-            print(f"\nNEXT STEPS:")
-            print(f"   1. Restart Claude Desktop or Cursor")
-            print(f"   2. Look for the MCP server icon in the chat interface")
+            print("\nNEXT STEPS:")
+            print("   1. Restart Claude Desktop or Cursor")
+            print("   2. Look for the MCP server icon in the chat interface")
             print(f"   3. The server should appear as '{SERVER_NAME}' in your available tools")
-            print(f"   4. Try asking: 'What portfolio optimization tools do you have?'")
+            print("   4. Try asking: 'What portfolio optimization tools do you have?'")
         else:
             print("ERROR: MCP configuration failed")
 
-    print(f"\nMANUAL SERVER OPTIONS:")
-    print(f"   • uv run mcportfolio/server/main.py")
-    print(f"   • uvicorn mcportfolio.server.main:asgi_app --host 0.0.0.0 --port 8001")
-    print(f"\nFor more info, see: README.md")
+    print("\nMANUAL SERVER OPTIONS:")
+    print("   • uv run mcportfolio/server/main.py")
+    print("   • uvicorn mcportfolio.server.main:asgi_app --host 0.0.0.0 --port 8001")
+    print("\nFor more info, see: README.md")
     print("=" * 50)
 
 

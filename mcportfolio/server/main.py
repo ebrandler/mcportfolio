@@ -3,7 +3,7 @@ import json
 import logging
 import sys
 from typing import Any
-from starlette.responses import JSONResponse
+from starlette.applications import Starlette
 
 from fastmcp import FastMCP
 from mcp.types import TextContent
@@ -42,12 +42,13 @@ from mcportfolio.solvers.portfolio_solver import (
 # Configure logging to stderr
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    stream=sys.stderr  # Redirect logs to stderr
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    stream=sys.stderr,  # Redirect logs to stderr
 )
 logger = logging.getLogger(__name__)
 
 # Move FastMCP app initialization to after tool function definitions
+
 
 def solve_cvxpy_problem_tool(problem: CVXPYProblem) -> list[TextContent]:
     """Solve a CVXPY optimization problem.
@@ -71,8 +72,7 @@ def solve_cvxpy_problem_tool(problem: CVXPYProblem) -> list[TextContent]:
                     text=json.dumps(
                         {
                             "values": {
-                                k: v.tolist() if hasattr(v, "tolist") else v
-                                for k, v in solution.values.items()
+                                k: v.tolist() if hasattr(v, "tolist") else v for k, v in solution.values.items()
                             },
                             "objective_value": solution.objective_value,
                             "status": solution.status,
@@ -88,6 +88,7 @@ def solve_cvxpy_problem_tool(problem: CVXPYProblem) -> list[TextContent]:
             return [TextContent(type="text", text=f"Error solving problem: {error}")]
         case _:
             return [TextContent(type="text", text="Unexpected error in solve_cvxpy_problem_tool")]
+
 
 def simple_cvxpy_solver(
     variables: list[dict[str, Any]],
@@ -156,8 +157,7 @@ def simple_cvxpy_solver(
                         text=json.dumps(
                             {
                                 "values": {
-                                    k: v.tolist() if hasattr(v, "tolist") else v
-                                    for k, v in solution.values.items()
+                                    k: v.tolist() if hasattr(v, "tolist") else v for k, v in solution.values.items()
                                 },
                                 "objective_value": solution.objective_value,
                                 "status": solution.status,
@@ -180,21 +180,21 @@ def simple_cvxpy_solver(
 
 def retrieve_stock_data_tool(tickers: list[str], period: str = "1y") -> dict[str, Any]:
     """Retrieve historical stock data for the given tickers.
-    
+
     This tool fetches historical price data for the specified stock tickers using Yahoo Finance.
-    
+
     Example:
         To retrieve 3 years of data for technology stocks:
         {
             "tickers": ["AAPL", "MSFT", "NVDA", "GOOGL", "META"],
             "period": "3y"
         }
-    
+
     Args:
         tickers: List of stock tickers to retrieve data for
         period: Time period to retrieve (e.g., "1y" for 1 year, "3y" for 3 years)
                 Supported periods: "1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"
-    
+
     Returns:
         Dictionary containing:
         - status: "success" or "error"
@@ -216,15 +216,12 @@ def retrieve_stock_data_tool(tickers: list[str], period: str = "1y") -> dict[str
 
 
 def solve_portfolio_tool(
-    description: str,
-    tickers: list[str],
-    constraints: list[str],
-    objective: str
+    description: str, tickers: list[str], constraints: list[str], objective: str
 ) -> dict[str, Any]:
     """Solve a portfolio optimization problem.
-    
+
     This tool optimizes a portfolio of stocks based on historical data and specified constraints.
-    
+
     Examples:
         1. Basic minimum volatility portfolio:
         {
@@ -295,7 +292,7 @@ def solve_portfolio_tool(
             ],
             "objective": "minimize_volatility"
         }
-    
+
     Args:
         description: Description of the portfolio optimization problem
         tickers: List of stock tickers to include in the portfolio
@@ -317,7 +314,7 @@ def solve_portfolio_tool(
                   - "maximize_quadratic_utility": Maximize quadratic utility
                   - "efficient_risk": Efficient risk optimization
                   - "efficient_return": Efficient return optimization
-    
+
     Returns:
         Dictionary containing:
         - status: "success" or "error"
@@ -332,10 +329,7 @@ def solve_portfolio_tool(
     """
     try:
         problem = PortfolioProblem(
-            description=description,
-            tickers=tickers,
-            constraints=constraints,
-            objective=objective
+            description=description, tickers=tickers, constraints=constraints, objective=objective
         )
         result = solve_portfolio_problem(problem)
         return result
@@ -352,10 +346,10 @@ def solve_black_litterman_tool(
     tau: float = 0.05,
     market_cap_weights: dict[str, float] | None = None,
     min_weight: float = 0.0,
-    max_weight: float = 1.0
+    max_weight: float = 1.0,
 ) -> dict[str, Any]:
     """Solve a portfolio optimization problem using the Black-Litterman model.
-    
+
     Args:
         description: Problem description
         tickers: List of asset tickers
@@ -368,14 +362,14 @@ def solve_black_litterman_tool(
         market_cap_weights: Market capitalization weights
         min_weight: Minimum weight for any asset
         max_weight: Maximum weight for any asset
-        
+
     Returns:
         Dictionary containing optimization results
     """
     try:
         # Convert views to BlackLittermanView objects
         bl_views = [BlackLittermanView(**view) for view in views]
-        
+
         # Create problem
         problem = BlackLittermanProblem(
             description=description,
@@ -385,25 +379,18 @@ def solve_black_litterman_tool(
             tau=tau,
             market_cap_weights=market_cap_weights,
             min_weight=min_weight,
-            max_weight=max_weight
+            max_weight=max_weight,
         )
-        
+
         # Solve problem
         result = solve_black_litterman_problem(problem)
         return result
     except Exception as e:
-        return {
-            "status": "error",
-            "message": f"Error in Black-Litterman optimization: {e!s}"
-        }
+        return {"status": "error", "message": f"Error in Black-Litterman optimization: {e!s}"}
 
 
 def solve_cla_tool(
-    description: str,
-    tickers: list[str],
-    min_weight: float = 0.0,
-    max_weight: float = 1.0,
-    risk_free_rate: float = 0.0
+    description: str, tickers: list[str], min_weight: float = 0.0, max_weight: float = 1.0, risk_free_rate: float = 0.0
 ) -> list[TextContent]:
     """Solve a Critical Line Algorithm (CLA) portfolio optimization problem.
 
@@ -437,7 +424,7 @@ def solve_cla_tool(
             tickers=tickers,
             min_weight=min_weight,
             max_weight=max_weight,
-            risk_free_rate=risk_free_rate
+            risk_free_rate=risk_free_rate,
         )
 
         result = solve_cla_problem(problem)
@@ -445,18 +432,16 @@ def solve_cla_tool(
 
     except Exception as e:
         logger.error(f"Error in CLA optimization: {e}")
-        return [TextContent(type="text", text=json.dumps({
-            "status": "error",
-            "message": f"Error in CLA optimization: {e!s}"
-        }, indent=2))]
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps({"status": "error", "message": f"Error in CLA optimization: {e!s}"}, indent=2),
+            )
+        ]
 
 
 def solve_efficient_frontier_tool(
-    description: str,
-    tickers: list[str],
-    min_weight: float = 0.0,
-    max_weight: float = 1.0,
-    risk_free_rate: float = 0.0
+    description: str, tickers: list[str], min_weight: float = 0.0, max_weight: float = 1.0, risk_free_rate: float = 0.0
 ) -> list[TextContent]:
     """Solve a mean-variance optimization problem using the Efficient Frontier method.
 
@@ -489,7 +474,7 @@ def solve_efficient_frontier_tool(
             tickers=tickers,
             min_weight=min_weight,
             max_weight=max_weight,
-            risk_free_rate=risk_free_rate
+            risk_free_rate=risk_free_rate,
         )
 
         result = solve_efficient_frontier_problem(problem)
@@ -497,18 +482,18 @@ def solve_efficient_frontier_tool(
 
     except Exception as e:
         logger.error(f"Error in Efficient Frontier optimization: {e}")
-        return [TextContent(type="text", text=json.dumps({
-            "status": "error",
-            "message": f"Error in Efficient Frontier optimization: {e!s}"
-        }, indent=2))]
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps(
+                    {"status": "error", "message": f"Error in Efficient Frontier optimization: {e!s}"}, indent=2
+                ),
+            )
+        ]
 
 
 def solve_hierarchical_portfolio_tool(
-    description: str,
-    tickers: list[str],
-    min_weight: float = 0.0,
-    max_weight: float = 1.0,
-    risk_free_rate: float = 0.0
+    description: str, tickers: list[str], min_weight: float = 0.0, max_weight: float = 1.0, risk_free_rate: float = 0.0
 ) -> list[TextContent]:
     """Solve a Hierarchical Risk Parity (HRP) portfolio optimization problem.
 
@@ -542,7 +527,7 @@ def solve_hierarchical_portfolio_tool(
             tickers=tickers,
             min_weight=min_weight,
             max_weight=max_weight,
-            risk_free_rate=risk_free_rate
+            risk_free_rate=risk_free_rate,
         )
 
         result = solve_hierarchical_portfolio_problem(problem)
@@ -550,17 +535,18 @@ def solve_hierarchical_portfolio_tool(
 
     except Exception as e:
         logger.error(f"Error in Hierarchical Portfolio optimization: {e}")
-        return [TextContent(type="text", text=json.dumps({
-            "status": "error",
-            "message": f"Error in Hierarchical Portfolio optimization: {e!s}"
-        }, indent=2))]
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps(
+                    {"status": "error", "message": f"Error in Hierarchical Portfolio optimization: {e!s}"}, indent=2
+                ),
+            )
+        ]
 
 
 def solve_discrete_allocation_tool(
-    description: str,
-    tickers: list[str],
-    weights: dict[str, float],
-    portfolio_value: float
+    description: str, tickers: list[str], weights: dict[str, float], portfolio_value: float
 ) -> list[TextContent]:
     """Convert portfolio weights to discrete share allocations for a given portfolio value.
 
@@ -588,10 +574,7 @@ def solve_discrete_allocation_tool(
     """
     try:
         problem = DiscreteAllocationProblem(
-            description=description,
-            tickers=tickers,
-            weights=weights,
-            portfolio_value=portfolio_value
+            description=description, tickers=tickers, weights=weights, portfolio_value=portfolio_value
         )
 
         result = solve_discrete_allocation_problem(problem)
@@ -599,10 +582,12 @@ def solve_discrete_allocation_tool(
 
     except Exception as e:
         logger.error(f"Error in Discrete Allocation: {e}")
-        return [TextContent(type="text", text=json.dumps({
-            "status": "error",
-            "message": f"Error in Discrete Allocation: {e!s}"
-        }, indent=2))]
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps({"status": "error", "message": f"Error in Discrete Allocation: {e!s}"}, indent=2),
+            )
+        ]
 
 
 # At the module level, after all function definitions, update the app initialization:
@@ -622,17 +607,21 @@ app.tool("solve_discrete_allocation")(solve_discrete_allocation_tool)
 # def health_route() -> JSONResponse:
 #     return JSONResponse({"status": "ok"})
 
+
 # ASGI app for HTTP/JSON-RPC transport (uvicorn)
 # Only create when explicitly imported for uvicorn
-def create_asgi_app():
+def create_asgi_app() -> Starlette:
     """Create ASGI app for uvicorn deployment"""
     return app.http_app()
 
+
 # For uvicorn, use: uvicorn mcportfolio.server.main:create_asgi_app --factory --host 0.0.0.0 --port 8001
 
-def main():
+
+def main() -> None:
     """Main entry point for the MCP server"""
     app.run(transport="stdio")
+
 
 if __name__ == "__main__":
     # For Claude Desktop and MCP clients, use stdio transport by default
