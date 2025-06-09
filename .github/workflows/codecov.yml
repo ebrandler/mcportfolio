@@ -1,9 +1,10 @@
 name: codecov
+
 on:
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   codecov:
@@ -15,23 +16,32 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.12"]
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4  # Update from v3
+
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
-      - name: Install dependencies
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "latest"
+
+      - name: Setup virtual environment and install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install ecos
+          uv venv
+          uv pip install -e ".[dev]"
+          uv pip install ecos pytest pytest-cov
+
       - name: Generate coverage report
         run: |
-          pip install pytest pytest-cov
-          pytest --cov=./ --cov-report=xml
+          uv run pytest --cov=./ --cov-report=xml
+
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4  # Update from v3
         with:
           files: ./coverage.xml
           fail_ci_if_error: true
