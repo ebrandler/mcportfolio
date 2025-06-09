@@ -1228,6 +1228,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
+    { name = "pandas-datareader" },
     { name = "pydantic" },
     { name = "pyportfolioopt" },
     { name = "returns" },
@@ -1259,6 +1260,7 @@ requires-dist = [
     { name = "matplotlib", specifier = "==3.8.2" },
     { name = "numpy", specifier = "==1.26.3" },
     { name = "pandas", specifier = "==2.2.0" },
+    { name = "pandas-datareader", specifier = ">=0.10.0" },
     { name = "pydantic", specifier = ">=2.7.2" },
     { name = "pyportfolioopt", specifier = "==1.5.5" },
     { name = "pytest", marker = "extra == 'dev'", specifier = "==7.4.4" },
@@ -1470,6 +1472,20 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/68/b42aea61273d47dbac1ba465739c90310e55081be4a33a0d44022194fb0a/pandas-2.2.0-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:a20628faaf444da122b2a64b1e5360cde100ee6283ae8effa0d8745153809a2e", size = 15855969, upload-time = "2024-01-20T02:39:34.036Z" },
     { url = "https://files.pythonhosted.org/packages/dc/c3/0df8f14482f9edee3d23b55edfb1c9d94376e78e4a815e0b2f7cf2776fe7/pandas-2.2.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:f5be5d03ea2073627e7111f61b9f1f0d9625dc3c4d8dda72cc827b0c58a1d042", size = 13381916, upload-time = "2024-01-20T02:40:57.612Z" },
     { url = "https://files.pythonhosted.org/packages/87/03/fe50521919aa981f6a1c197037da4623a267b0e5f42246d69ba048e86da3/pandas-2.2.0-cp312-cp312-win_amd64.whl", hash = "sha256:a626795722d893ed6aacb64d2401d017ddc8a2341b49e0384ab9bf7112bdec30", size = 11464015, upload-time = "2024-01-20T02:42:13.686Z" },
+]
+
+[[package]]
+name = "pandas-datareader"
+version = "0.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "lxml" },
+    { name = "pandas" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cf/94/b0363da3981da77d3ec7990e89006e4d4f71fd71a82290ce5c85540a7019/pandas-datareader-0.10.0.tar.gz", hash = "sha256:9fc3c63d39bc0c10c2683f1c6d503ff625020383e38f6cbe14134826b454d5a6", size = 95477, upload-time = "2021-07-13T12:38:59.942Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3f/16/56c9d648b503619ebe96f726b5f642b68e299b34162ed2d6faa9d7966b7d/pandas_datareader-0.10.0-py3-none-any.whl", hash = "sha256:0b95ff3635bc3ee1a6073521b557ab0e3c39d219f4a3b720b6b0bc6e8cdb4bb7", size = 109460, upload-time = "2021-07-13T12:38:57.795Z" },
 ]
 
 [[package]]
