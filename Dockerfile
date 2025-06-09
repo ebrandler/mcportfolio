@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     build-essential \
     g++ \
+    git \
+    cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv package manager
