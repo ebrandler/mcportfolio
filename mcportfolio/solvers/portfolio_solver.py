@@ -37,62 +37,7 @@ def extract_tickers(task: str) -> list[str]:
     return [word.strip(",") for word in words if word.isalpha() and 2 <= len(word) <= 5]
 
 
-def _generate_sample_data(tickers: list[str], period: str = "1y") -> dict[str, Any]:
-    """Generate sample data for demonstration when real data is unavailable."""
-    logger.info(f"Generating sample data for tickers: {tickers}")
 
-    # Determine number of days based on period
-    period_days = {
-        "1d": 1, "5d": 5, "1mo": 22, "3mo": 66, "6mo": 132,
-        "1y": 252, "2y": 504, "5y": 1260, "10y": 2520, "ytd": 200, "max": 2520
-    }
-    num_days = period_days.get(period, 252)
-
-    # Generate realistic sample data
-    np.random.seed(42)  # For reproducible results
-    dates = pd.date_range(end=pd.Timestamp.now(), periods=num_days, freq='D')
-
-    # Create sample price data with realistic characteristics
-    prices_data = {}
-    for i, ticker in enumerate(tickers):
-        # Different starting prices and volatilities for each ticker
-        start_price = 100 + i * 50  # Starting prices: 100, 150, 200, etc.
-        volatility = 0.02 + i * 0.005  # Different volatilities
-
-        # Generate random walk with drift
-        returns = np.random.normal(0.0005, volatility, num_days)  # Small positive drift
-        price_series = [start_price]
-
-        for ret in returns[1:]:
-            price_series.append(price_series[-1] * (1 + ret))
-
-        prices_data[ticker] = price_series
-
-    # Create DataFrame
-    prices = pd.DataFrame(prices_data, index=dates)
-
-    # Calculate returns
-    returns = prices.pct_change().dropna()
-
-    # Calculate statistics
-    mean_returns = returns.mean() * 252  # Annualized
-    cov_matrix = returns.cov()
-
-    logger.info(f"Generated sample data - Prices shape: {prices.shape}, Returns shape: {returns.shape}")
-
-    return {
-        "status": "success",
-        "data": {
-            "prices": prices,
-            "returns": returns,
-            "mean_returns": mean_returns,
-            "cov_matrix": cov_matrix,
-            "start_date": returns.index[0].strftime("%Y-%m-%d"),
-            "end_date": returns.index[-1].strftime("%Y-%m-%d"),
-            "num_days": len(returns),
-        },
-        "note": "Using sample data for demonstration - Yahoo Finance API unavailable"
-    }
 
 
 def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any]:
@@ -150,10 +95,15 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
                 error_messages.append(f"Individual download failed: {e}")
                 logger.warning(f"Individual download failed: {e}")
 
-        # Approach 3: Use sample data if all else fails
+        # If all real data sources fail, return clear error
         if data is None or data.empty:
-            logger.warning("All download methods failed, using sample data for demonstration")
-            return _generate_sample_data(tickers, period)
+            error_summary = "; ".join(error_messages) if error_messages else "Unknown data retrieval failure"
+            return {
+                "status": "error",
+                "message": f"Unable to retrieve real market data for tickers {tickers}. "
+                          f"All data sources failed: {error_summary}. "
+                          f"Please check ticker symbols and try again later, or verify internet connectivity."
+            }
 
         logger.info(f"Final data shape: {data.shape}")
         logger.info(f"Final data columns: {data.columns.tolist()}")
