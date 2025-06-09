@@ -1,0 +1,23 @@
+# Temporary requirements.txt for CI compatibility
+# This file is temporarily restored to fix GitHub Actions workflows
+# that still reference requirements.txt instead of pyproject.toml
+#
+# TODO: Update GitHub Actions workflows to use uv and pyproject.toml
+# TODO: Remove this file after workflows are updated
+#
+# Dependencies from pyproject.toml:
+pydantic>=2.7.2
+returns==0.20.0
+fastmcp>=2.7.0
+cvxpy==1.4.1
+pyportfolioopt==1.5.5
+pandas==2.2.0
+numpy==1.26.3
+scipy==1.12.0
+yfinance==0.2.36
+matplotlib==3.8.2
+
+# Additional dependencies for CI:
+pytest>=7.0.0
+pytest-cov>=4.0.0
+ecos>=2.0.0
