@@ -615,10 +615,11 @@ def create_asgi_app() -> Starlette:
     http_app = app.http_app()
 
     # Add health endpoint
+    from starlette.requests import Request
     from starlette.responses import JSONResponse
     from starlette.routing import Route
 
-    async def health_check(request):
+    async def health_check(request: Request) -> JSONResponse:
         return JSONResponse({"status": "healthy", "service": "mcportfolio"})
 
     # Add the health route
