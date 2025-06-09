@@ -42,16 +42,14 @@ The LLM's ability to pick the right solver, parameters, and variables for an opt
 
 ## Claude Project Instructions
 
-To improve performance and use McPortfolio properly, add the contents of `docs/Claude_Project_Instructions.md` to your Claude project's knowledge section. These instructions give:
+Best practise is to run McPortfolio in a Claude Project. This allows you to set project knowledge, which will improve performance.
 
-1. A system prompt that guides Claude to use the MCP server well
-2. Clear rules on when and how to use the portfolio optimization tools
-3. Standard templates for different types of optimization requests
-4. Error handling and backup steps
-5. Example interactions and expected responses
+There's presently (2025-06-09) no way to force Claude to use a specific tool via MCP Server. So to nudge Claude in the right direction, you can explicitly tell it which tool to use. But even then, you may face issues.
+
+So to help Claude better understand the tools' purposes and how to use them, copy and paste the contents of docs/Claude_Project_Instructions.md to your Claude project's knowledge section. Queries then run from within the project will run more smoothly.
 
 The instructions help Claude to:
-- Find when a request fits MCP's features
+- Find when a request fits McPortfolio's features
 - Make proper requests using the standard JSON format
 - Check outputs against financial best practices
 - Give clear explanations of its optimization choices
