@@ -283,30 +283,22 @@ This will remove the project and clean up build artifacts.
 
 ### Running the Server
 
-You can start the server with either:
-
+**For Claude Desktop/MCP clients (stdio transport):**
 ```bash
 uv run mcportfolio/server/main.py
 ```
 
-or
-
-```bash
-python mcportfolio/server/main.py
-```
-
-or
-
+**For HTTP/web deployment:**
 ```bash
 uvicorn mcportfolio.server.main:asgi_app --host 0.0.0.0 --port 8001
 ```
 
-2. The server will be available at `http://localhost:8001`
+The HTTP server will be available at `http://localhost:8001`
 
-3. Test the server health:
-   ```bash
-   curl http://localhost:8001/healthcheck
-   ```
+Test the HTTP server health:
+```bash
+curl http://localhost:8001/health
+```
 
 ## Docker Usage
 

@@ -3,19 +3,23 @@ from typing import TypedDict
 
 import matplotlib.pyplot as plt
 
+# Monkey-patch matplotlib style before importing pypfopt to fix seaborn style issue
+original_style_use = plt.style.use
+
+def patched_style_use(style):
+    """Patch matplotlib style.use to handle old seaborn style names"""
+    if style == "seaborn-deep":
+        style = "seaborn-v0_8-deep"
+    elif isinstance(style, str) and style.startswith("seaborn-") and not style.startswith("seaborn-v0_8"):
+        # Convert old seaborn style names to new format
+        style = style.replace("seaborn-", "seaborn-v0_8-")
+    return original_style_use(style)
+
+plt.style.use = patched_style_use
+
 from pypfopt.cla import CLA
 from pypfopt.efficient_frontier import EfficientFrontier
 from pypfopt.plotting import plot_efficient_frontier, plot_weights
-
-# Monkey-patch pypfopt.plotting to use the correct style for matplotlib >=3.6
-import pypfopt.plotting
-try:
-    plt.style.use("seaborn-v0_8-deep")
-except OSError:
-    plt.style.use("seaborn-deep")
-
-# Patch the style in pypfopt.plotting as well
-pypfopt.plotting.plt.style.use = plt.style.use
 
 
 class PlotKwargs(TypedDict, total=False):

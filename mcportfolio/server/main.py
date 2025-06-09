@@ -396,13 +396,24 @@ app.tool("retrieve_stock_data")(retrieve_stock_data_tool)
 app.tool("solve_portfolio")(solve_portfolio_tool)
 app.tool("solve_black_litterman")(solve_black_litterman_tool)
 
-@app.custom_route("/health", methods=["GET"])
-def health_route() -> JSONResponse:
-    return JSONResponse({"status": "ok"})
+# Health route for HTTP mode only - not needed for stdio transport
+# @app.custom_route("/health", methods=["GET"])
+# def health_route() -> JSONResponse:
+#     return JSONResponse({"status": "ok"})
 
-# Expose the ASGI app for Uvicorn (HTTP/JSON-RPC transport)
-asgi_app = app.http_app()
+# ASGI app for HTTP/JSON-RPC transport (uvicorn)
+# Only create when explicitly imported for uvicorn
+def create_asgi_app():
+    """Create ASGI app for uvicorn deployment"""
+    return app.http_app()
+
+# For uvicorn, use: uvicorn mcportfolio.server.main:create_asgi_app --factory --host 0.0.0.0 --port 8001
+
+def main():
+    """Main entry point for the MCP server"""
+    app.run(transport="stdio")
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("mcportfolio.server.main:asgi_app", host="0.0.0.0", port=8001, reload=True)
+    # For Claude Desktop and MCP clients, use stdio transport by default
+    # For HTTP server, use: uvicorn mcportfolio.server.main:create_asgi_app --factory --host 0.0.0.0 --port 8001
+    main()
