@@ -523,7 +523,7 @@ curl http://localhost:8001/health
 
 2. Run the container:
    ```bash
-   docker run -d -p 8001:8081 --name mcportfolio mcportfolio:latest
+   docker run -d -p 8001:8001 --name mcportfolio mcportfolio:latest
    ```
 
 3. Check container status:
@@ -532,12 +532,18 @@ curl http://localhost:8001/health
    docker logs mcportfolio
    ```
 
+4. Test the HTTP server:
+   ```bash
+   curl http://localhost:8001/health
+   ```
+
 ### Docker Compose (Optional)
 
 For development with Docker Compose:
 
 1. Start the services:
    ```bash
+   cd infra
    docker-compose up -d
    ```
 

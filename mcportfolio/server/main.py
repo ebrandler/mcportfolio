@@ -612,7 +612,19 @@ app.tool("solve_discrete_allocation")(solve_discrete_allocation_tool)
 # Only create when explicitly imported for uvicorn
 def create_asgi_app() -> Starlette:
     """Create ASGI app for uvicorn deployment"""
-    return app.http_app()
+    http_app = app.http_app()
+
+    # Add health endpoint
+    from starlette.responses import JSONResponse
+    from starlette.routing import Route
+
+    async def health_check(request):
+        return JSONResponse({"status": "healthy", "service": "mcportfolio"})
+
+    # Add the health route
+    http_app.routes.append(Route("/health", health_check))
+
+    return http_app
 
 
 # For uvicorn, use: uvicorn mcportfolio.server.main:create_asgi_app --factory --host 0.0.0.0 --port 8001

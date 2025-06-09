@@ -29,15 +29,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-COPY mcportfoliooptimizer/ ./mcportfoliooptimizer/
+# Copy the application code
+COPY mcportfolio/ ./mcportfolio/
 COPY examples/ ./examples/
+COPY pyproject.toml ./
 
-# Expose the default MCP port
-EXPOSE 8081
+# Expose the default HTTP port
+EXPOSE 8001
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8081/healthcheck || exit 1
+  CMD curl -f http://localhost:8001/health || exit 1
 
-# Run the server with SSE transport
-CMD ["uv", "run", "mcp", "run", "mcportfoliooptimizer/server/main.py", "--transport", "sse"]
+# Run the server with HTTP transport
+CMD ["uvicorn", "mcportfolio.server.main:create_asgi_app", "--factory", "--host", "0.0.0.0", "--port", "8001"]
