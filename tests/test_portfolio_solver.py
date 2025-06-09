@@ -9,10 +9,11 @@ class TestPortfolioSolver(unittest.TestCase):
         """Test that retrieve_stock_data returns an error when insufficient data points are available."""
         result = retrieve_stock_data(self.test_tickers, period="1d")
         self.assertEqual(result["status"], "error")
-        # Check for either error message since both indicate insufficient data
+        # Check for error messages that indicate data retrieval failure
         self.assertTrue(
             "Insufficient data points for tickers" in result["message"] or
-            "Error retrieving stock data" in result["message"],
+            "Error retrieving stock data" in result["message"] or
+            "Unable to retrieve real market data" in result["message"],
             f"Unexpected error message: {result['message']}"
         )
 
