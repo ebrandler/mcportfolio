@@ -106,35 +106,7 @@ def _get_data_from_stooq(tickers: list[str], period: str = "1y") -> tuple[pd.Dat
         return None, f"Stooq error: {e}"
 
 
-def _get_data_from_tiingo(tickers: list[str], period: str = "1y") -> tuple[pd.DataFrame | None, str]:
-    """Fetch data from Tiingo via pandas-datareader (requires API key)."""
-    if not PANDAS_DATAREADER_AVAILABLE:
-        return None, "pandas-datareader not available"
 
-    try:
-        logger.info("Trying Tiingo data source...")
-
-        # Convert period to start/end dates
-        end_date = datetime.now()
-        period_days = {
-            "1d": 1, "5d": 5, "1mo": 30, "3mo": 90, "6mo": 180,
-            "1y": 365, "2y": 730, "5y": 1825, "10y": 3650, "ytd": 200, "max": 3650
-        }
-        days = period_days.get(period, 365)
-        start_date = end_date - timedelta(days=days)
-
-        # Note: Tiingo requires API key in environment variable TIINGO_API_KEY
-        data = pdr.get_data_tiingo(tickers, start=start_date, end=end_date)
-
-        if data is not None and not data.empty:
-            logger.info(f"Tiingo data retrieved - shape: {data.shape}")
-            return data, ""
-        else:
-            return None, "No data retrieved from Tiingo"
-
-    except Exception as e:
-        logger.warning(f"Tiingo data source failed: {e}")
-        return None, f"Tiingo error: {e}"
 
 
 def _get_data_from_fred(tickers: list[str], period: str = "1y") -> tuple[pd.DataFrame | None, str]:
@@ -248,16 +220,7 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
             else:
                 error_messages.append(f"Stooq failed: {stooq_error}")
 
-        # Approach 4: Try Tiingo (requires API key)
-        if data is None or data.empty:
-            tiingo_data, tiingo_error = _get_data_from_tiingo(tickers, period)
-            if tiingo_data is not None and not tiingo_data.empty:
-                data = tiingo_data
-                logger.info(f"Tiingo data retrieved - shape: {data.shape}")
-            else:
-                error_messages.append(f"Tiingo failed: {tiingo_error}")
-
-        # Approach 5: Try FRED for market indices
+        # Approach 4: Try FRED for market indices
         if data is None or data.empty:
             fred_data, fred_error = _get_data_from_fred(tickers, period)
             if fred_data is not None and not fred_data.empty:
