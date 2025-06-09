@@ -20,8 +20,18 @@ from mcportfolio.models.portfolio_black_litterman_models import (
     BlackLittermanProblem,
     BlackLittermanView,
 )
+from mcportfolio.models.portfolio_models import (
+    CLAProblem,
+    DiscreteAllocationProblem,
+    EfficientFrontierProblem,
+    HierarchicalPortfolioProblem,
+)
 from mcportfolio.solvers.black_litterman_solver import solve_black_litterman_problem
+from mcportfolio.solvers.cla_solver import solve_cla_problem
 from mcportfolio.solvers.cvxpy_solver import solve_cvxpy_problem
+from mcportfolio.solvers.discrete_allocation_solver import solve_discrete_allocation_problem
+from mcportfolio.solvers.efficient_frontier_solver import solve_efficient_frontier_problem
+from mcportfolio.solvers.hierarchical_portfolio_solver import solve_hierarchical_portfolio_problem
 from mcportfolio.solvers.portfolio_solver import (
     retrieve_stock_data,
     solve_problem as solve_portfolio_problem,
@@ -388,6 +398,213 @@ def solve_black_litterman_tool(
         }
 
 
+def solve_cla_tool(
+    description: str,
+    tickers: list[str],
+    min_weight: float = 0.0,
+    max_weight: float = 1.0,
+    risk_free_rate: float = 0.0
+) -> list[TextContent]:
+    """Solve a Critical Line Algorithm (CLA) portfolio optimization problem.
+
+    The Critical Line Algorithm is an efficient method for solving mean-variance optimization
+    problems. It finds the entire efficient frontier by identifying critical points where
+    constraints become active or inactive.
+
+    Args:
+        description: Description of the optimization problem
+        tickers: List of stock ticker symbols (e.g., ["AAPL", "MSFT", "GOOGL"])
+        min_weight: Minimum weight for any asset (default: 0.0)
+        max_weight: Maximum weight for any asset (default: 1.0)
+        risk_free_rate: Risk-free rate for Sharpe ratio calculation (default: 0.0)
+
+    Returns:
+        JSON result containing optimized portfolio weights, performance metrics,
+        and comparison portfolios (minimum variance and maximum return).
+
+    Example:
+        {
+            "description": "Optimize tech portfolio using CLA",
+            "tickers": ["AAPL", "MSFT", "GOOGL", "NVDA"],
+            "min_weight": 0.05,
+            "max_weight": 0.4,
+            "risk_free_rate": 0.02
+        }
+    """
+    try:
+        problem = CLAProblem(
+            description=description,
+            tickers=tickers,
+            min_weight=min_weight,
+            max_weight=max_weight,
+            risk_free_rate=risk_free_rate
+        )
+
+        result = solve_cla_problem(problem)
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+    except Exception as e:
+        logger.error(f"Error in CLA optimization: {e}")
+        return [TextContent(type="text", text=json.dumps({
+            "status": "error",
+            "message": f"Error in CLA optimization: {e!s}"
+        }, indent=2))]
+
+
+def solve_efficient_frontier_tool(
+    description: str,
+    tickers: list[str],
+    min_weight: float = 0.0,
+    max_weight: float = 1.0,
+    risk_free_rate: float = 0.0
+) -> list[TextContent]:
+    """Solve a mean-variance optimization problem using the Efficient Frontier method.
+
+    This tool implements the classic Markowitz mean-variance optimization to find
+    the portfolio that maximizes the Sharpe ratio (risk-adjusted return).
+
+    Args:
+        description: Description of the optimization problem
+        tickers: List of stock ticker symbols (e.g., ["AAPL", "MSFT", "GOOGL"])
+        min_weight: Minimum weight for any asset (default: 0.0)
+        max_weight: Maximum weight for any asset (default: 1.0)
+        risk_free_rate: Risk-free rate for Sharpe ratio calculation (default: 0.0)
+
+    Returns:
+        JSON result containing optimized portfolio weights, performance metrics,
+        and comparison portfolios (minimum variance and maximum return).
+
+    Example:
+        {
+            "description": "Maximize Sharpe ratio for diversified portfolio",
+            "tickers": ["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN"],
+            "min_weight": 0.0,
+            "max_weight": 0.3,
+            "risk_free_rate": 0.025
+        }
+    """
+    try:
+        problem = EfficientFrontierProblem(
+            description=description,
+            tickers=tickers,
+            min_weight=min_weight,
+            max_weight=max_weight,
+            risk_free_rate=risk_free_rate
+        )
+
+        result = solve_efficient_frontier_problem(problem)
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+    except Exception as e:
+        logger.error(f"Error in Efficient Frontier optimization: {e}")
+        return [TextContent(type="text", text=json.dumps({
+            "status": "error",
+            "message": f"Error in Efficient Frontier optimization: {e!s}"
+        }, indent=2))]
+
+
+def solve_hierarchical_portfolio_tool(
+    description: str,
+    tickers: list[str],
+    min_weight: float = 0.0,
+    max_weight: float = 1.0,
+    risk_free_rate: float = 0.0
+) -> list[TextContent]:
+    """Solve a Hierarchical Risk Parity (HRP) portfolio optimization problem.
+
+    HRP is a modern portfolio optimization technique that uses machine learning
+    concepts to build diversified portfolios. It addresses some limitations of
+    traditional mean-variance optimization by using hierarchical clustering.
+
+    Args:
+        description: Description of the optimization problem
+        tickers: List of stock ticker symbols (e.g., ["AAPL", "MSFT", "GOOGL"])
+        min_weight: Minimum weight for any asset (default: 0.0)
+        max_weight: Maximum weight for any asset (default: 1.0)
+        risk_free_rate: Risk-free rate for Sharpe ratio calculation (default: 0.0)
+
+    Returns:
+        JSON result containing optimized portfolio weights, performance metrics,
+        and comparison portfolios (minimum variance and maximum return).
+
+    Example:
+        {
+            "description": "Build HRP portfolio for risk parity",
+            "tickers": ["AAPL", "MSFT", "GOOGL", "JPM", "JNJ", "PG", "XOM"],
+            "min_weight": 0.02,
+            "max_weight": 0.25,
+            "risk_free_rate": 0.02
+        }
+    """
+    try:
+        problem = HierarchicalPortfolioProblem(
+            description=description,
+            tickers=tickers,
+            min_weight=min_weight,
+            max_weight=max_weight,
+            risk_free_rate=risk_free_rate
+        )
+
+        result = solve_hierarchical_portfolio_problem(problem)
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+    except Exception as e:
+        logger.error(f"Error in Hierarchical Portfolio optimization: {e}")
+        return [TextContent(type="text", text=json.dumps({
+            "status": "error",
+            "message": f"Error in Hierarchical Portfolio optimization: {e!s}"
+        }, indent=2))]
+
+
+def solve_discrete_allocation_tool(
+    description: str,
+    tickers: list[str],
+    weights: dict[str, float],
+    portfolio_value: float
+) -> list[TextContent]:
+    """Convert portfolio weights to discrete share allocations for a given portfolio value.
+
+    This tool takes theoretical portfolio weights (which sum to 1.0) and converts them
+    to actual share quantities that can be purchased, accounting for indivisible shares
+    and the specific portfolio value.
+
+    Args:
+        description: Description of the allocation problem
+        tickers: List of stock ticker symbols that match the weights keys
+        weights: Dictionary mapping ticker symbols to their target weights (should sum to ~1.0)
+        portfolio_value: Total portfolio value in dollars to allocate
+
+    Returns:
+        JSON result containing the number of shares to buy for each stock
+        and any leftover cash that couldn't be allocated.
+
+    Example:
+        {
+            "description": "Allocate $10,000 based on optimized weights",
+            "tickers": ["AAPL", "MSFT", "GOOGL"],
+            "weights": {"AAPL": 0.4, "MSFT": 0.35, "GOOGL": 0.25},
+            "portfolio_value": 10000
+        }
+    """
+    try:
+        problem = DiscreteAllocationProblem(
+            description=description,
+            tickers=tickers,
+            weights=weights,
+            portfolio_value=portfolio_value
+        )
+
+        result = solve_discrete_allocation_problem(problem)
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
+    except Exception as e:
+        logger.error(f"Error in Discrete Allocation: {e}")
+        return [TextContent(type="text", text=json.dumps({
+            "status": "error",
+            "message": f"Error in Discrete Allocation: {e!s}"
+        }, indent=2))]
+
+
 # At the module level, after all function definitions, update the app initialization:
 app = FastMCP(name="mcportfolio")
 app.tool("solve_cvxpy_problem")(solve_cvxpy_problem_tool)
@@ -395,6 +612,10 @@ app.tool("simple_cvxpy_solver")(simple_cvxpy_solver)
 app.tool("retrieve_stock_data")(retrieve_stock_data_tool)
 app.tool("solve_portfolio")(solve_portfolio_tool)
 app.tool("solve_black_litterman")(solve_black_litterman_tool)
+app.tool("solve_cla")(solve_cla_tool)
+app.tool("solve_efficient_frontier")(solve_efficient_frontier_tool)
+app.tool("solve_hierarchical_portfolio")(solve_hierarchical_portfolio_tool)
+app.tool("solve_discrete_allocation")(solve_discrete_allocation_tool)
 
 # Health route for HTTP mode only - not needed for stdio transport
 # @app.custom_route("/health", methods=["GET"])

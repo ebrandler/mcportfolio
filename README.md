@@ -6,7 +6,7 @@
     <img src=".github/logo.png" width="500px" alt="McPortfolio">
 </p>
 
-This project allows users work with advanced portfolio optimization using natural language, without writing code. 
+This project allows users to work with advanced portfolio optimization using natural language, without writing code. It provides **9 specialized MCP tools** covering everything from classic mean-variance optimization to modern machine learning approaches like Hierarchical Risk Parity.
 
 **Overview of Portfolio Optimizers:**
 
@@ -74,6 +74,144 @@ Thus this project provides four major sets of functionality (though of course th
 - Optimizers
 
 A key design goal of PyPortfolioOpt is modularity – the user should be able to swap in their components while still making use of the framework that PyPortfolioOpt provides.
+
+## Available MCP Tools
+
+McPortfolio provides a comprehensive suite of portfolio optimization tools through the Model Context Protocol (MCP) server. Each tool is designed for specific optimization scenarios and can be used independently or in combination.
+
+### Core Tools
+
+#### 1. `retrieve_stock_data`
+Retrieves historical stock market data for analysis.
+
+**Parameters:**
+- `tickers`: List of stock symbols (e.g., ["AAPL", "MSFT", "GOOGL"])
+- `period`: Time period for data (e.g., "1y", "2y", "5y")
+
+**Use Case:** Data collection for any portfolio optimization analysis.
+
+#### 2. `solve_portfolio`
+General-purpose portfolio optimization with flexible constraints and objectives.
+
+**Parameters:**
+- `description`: Problem description
+- `tickers`: List of stock symbols
+- `constraints`: List of constraint strings (e.g., ["max_weight 0.3", "min_weight 0.05"])
+- `objective`: Optimization objective ("minimize_volatility", "maximize_sharpe_ratio", etc.)
+
+**Use Case:** Most common portfolio optimization scenarios with custom constraints.
+
+### Specialized Optimization Methods
+
+#### 3. `solve_efficient_frontier`
+Classic Markowitz mean-variance optimization for maximum Sharpe ratio portfolios.
+
+**Parameters:**
+- `description`: Problem description
+- `tickers`: List of stock symbols
+- `min_weight`: Minimum weight per asset (default: 0.0)
+- `max_weight`: Maximum weight per asset (default: 1.0)
+- `risk_free_rate`: Risk-free rate for Sharpe calculation (default: 0.0)
+
+**Use Case:** Traditional mean-variance optimization, ideal for well-diversified portfolios.
+
+#### 4. `solve_cla`
+Critical Line Algorithm for efficient frontier computation.
+
+**Parameters:**
+- `description`: Problem description
+- `tickers`: List of stock symbols
+- `min_weight`: Minimum weight per asset (default: 0.0)
+- `max_weight`: Maximum weight per asset (default: 1.0)
+- `risk_free_rate`: Risk-free rate for Sharpe calculation (default: 0.0)
+
+**Use Case:** Efficient computation of the entire efficient frontier, useful for risk-return analysis.
+
+#### 5. `solve_hierarchical_portfolio`
+Hierarchical Risk Parity (HRP) optimization using machine learning clustering.
+
+**Parameters:**
+- `description`: Problem description
+- `tickers`: List of stock symbols
+- `min_weight`: Minimum weight per asset (default: 0.0)
+- `max_weight`: Maximum weight per asset (default: 1.0)
+- `risk_free_rate`: Risk-free rate for Sharpe calculation (default: 0.0)
+
+**Use Case:** Modern portfolio construction that addresses estimation errors in traditional optimization.
+
+#### 6. `solve_black_litterman`
+Black-Litterman model combining market equilibrium with investor views.
+
+**Parameters:**
+- `description`: Problem description
+- `tickers`: List of stock symbols
+- `views`: List of investor views with expected returns and confidence levels
+- `risk_aversion`: Risk aversion parameter (default: 1.0)
+- `tau`: Scaling factor for uncertainty (default: 0.05)
+
+**Use Case:** Incorporating market views and expert opinions into portfolio optimization.
+
+### Utility Tools
+
+#### 7. `solve_discrete_allocation`
+Converts portfolio weights to actual share quantities for implementation.
+
+**Parameters:**
+- `description`: Problem description
+- `tickers`: List of stock symbols
+- `weights`: Dictionary of target weights (e.g., {"AAPL": 0.4, "MSFT": 0.6})
+- `portfolio_value`: Total portfolio value in dollars
+
+**Use Case:** Converting theoretical weights to practical share allocations for trading.
+
+#### 8. `solve_cvxpy_problem`
+Advanced custom optimization using CVXPY for complex constraints.
+
+**Parameters:**
+- `problem`: CVXPY problem specification with variables, constraints, and objectives
+
+**Use Case:** Custom optimization problems that require advanced mathematical formulations.
+
+#### 9. `simple_cvxpy_solver`
+Simplified CVXPY interface for basic optimization problems.
+
+**Parameters:**
+- `variables`: List of optimization variables
+- `objective_type`: "minimize" or "maximize"
+- `objective_expr`: Objective function expression
+- `constraints`: List of constraint expressions
+- `description`: Problem description
+
+**Use Case:** Simple custom optimization without complex CVXPY knowledge.
+
+## Tool Selection Guide
+
+Choose the right tool based on your optimization needs:
+
+| **Scenario** | **Recommended Tool** | **Why** |
+|--------------|---------------------|---------|
+| **General portfolio optimization** | `solve_portfolio` | Most flexible, supports various constraints and objectives |
+| **Classic mean-variance optimization** | `solve_efficient_frontier` | Standard Markowitz approach, well-tested |
+| **Risk parity / diversification focus** | `solve_hierarchical_portfolio` | Modern approach, robust to estimation errors |
+| **Efficient frontier analysis** | `solve_cla` | Efficient computation of entire frontier |
+| **Incorporating market views** | `solve_black_litterman` | Combines equilibrium with expert opinions |
+| **Converting weights to shares** | `solve_discrete_allocation` | Practical implementation of theoretical weights |
+| **Custom mathematical constraints** | `solve_cvxpy_problem` | Maximum flexibility for complex problems |
+| **Simple custom optimization** | `simple_cvxpy_solver` | Easy interface for basic custom problems |
+
+### When to Use Each Method
+
+**Traditional Approaches:**
+- **Efficient Frontier**: When you want to understand risk-return tradeoffs
+- **CLA**: When you need the complete efficient frontier efficiently
+- **General Portfolio**: When you have specific constraints or objectives
+
+**Modern Approaches:**
+- **HRP**: When you have many assets and want robust diversification
+- **Black-Litterman**: When you have market views or want to incorporate expert opinions
+
+**Practical Implementation:**
+- **Discrete Allocation**: Always use after optimization to convert to actual shares
 
 ## Portfolio Optimization Examples
 
@@ -180,7 +318,81 @@ The server provides two main endpoints for portfolio optimization. Here are comp
 }
 ```
 
-### 6. Modern Portfolio Theory (USolver Example)
+### 6. Hierarchical Risk Parity (HRP) Portfolio
+
+```python
+# Example: HRP portfolio for risk parity
+{
+    "description": "Build HRP portfolio for risk parity across sectors",
+    "tickers": [
+        "AAPL", "MSFT", "GOOGL",  # Tech
+        "JPM", "V", "BAC",        # Finance
+        "JNJ", "UNH", "PFE",      # Healthcare
+        "PG", "KO", "WMT"         # Consumer
+    ],
+    "min_weight": 0.02,
+    "max_weight": 0.25,
+    "risk_free_rate": 0.02
+}
+```
+
+### 7. Critical Line Algorithm (CLA) Portfolio
+
+```python
+# Example: CLA optimization for efficient frontier analysis
+{
+    "description": "Optimize tech portfolio using CLA",
+    "tickers": ["AAPL", "MSFT", "GOOGL", "NVDA", "META"],
+    "min_weight": 0.05,
+    "max_weight": 0.4,
+    "risk_free_rate": 0.025
+}
+```
+
+### 8. Discrete Allocation Example
+
+```python
+# Example: Convert weights to actual shares
+{
+    "description": "Allocate $50,000 based on optimized weights",
+    "tickers": ["AAPL", "MSFT", "GOOGL", "NVDA"],
+    "weights": {
+        "AAPL": 0.35,
+        "MSFT": 0.30,
+        "GOOGL": 0.20,
+        "NVDA": 0.15
+    },
+    "portfolio_value": 50000
+}
+```
+
+### 9. Black-Litterman with Market Views
+
+```python
+# Example: Black-Litterman with investor views
+{
+    "description": "Portfolio with bullish view on tech, bearish on energy",
+    "tickers": ["AAPL", "MSFT", "GOOGL", "XOM", "CVX", "JPM", "V"],
+    "views": [
+        {
+            "assets": ["AAPL", "MSFT", "GOOGL"],
+            "expected_return": 0.15,
+            "confidence": 0.8,
+            "description": "Tech sector outperformance"
+        },
+        {
+            "assets": ["XOM", "CVX"],
+            "expected_return": 0.05,
+            "confidence": 0.6,
+            "description": "Energy sector underperformance"
+        }
+    ],
+    "risk_aversion": 2.5,
+    "tau": 0.025
+}
+```
+
+### 10. Modern Portfolio Theory (USolver Example)
 
 This project uses USolver for different optimization problems. Here's how it works for a Modern Portfolio Theory problem, turned by the language model into a convex optimization problem that `cvxpy` can solve:
 
@@ -375,3 +587,33 @@ Generate coverage report:
 ```bash
 pytest --cov=mcportfolio --cov-report=html
 ```
+
+## Quick Reference
+
+### Available MCP Tools Summary
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `retrieve_stock_data` | Get market data | `tickers`, `period` |
+| `solve_portfolio` | General optimization | `tickers`, `constraints`, `objective` |
+| `solve_efficient_frontier` | Markowitz optimization | `tickers`, `min_weight`, `max_weight` |
+| `solve_cla` | Critical Line Algorithm | `tickers`, `min_weight`, `max_weight` |
+| `solve_hierarchical_portfolio` | HRP optimization | `tickers`, `min_weight`, `max_weight` |
+| `solve_black_litterman` | BL with views | `tickers`, `views`, `risk_aversion` |
+| `solve_discrete_allocation` | Weights to shares | `tickers`, `weights`, `portfolio_value` |
+| `solve_cvxpy_problem` | Custom optimization | `problem` (CVXPY format) |
+| `simple_cvxpy_solver` | Simple custom | `variables`, `objective_expr`, `constraints` |
+
+### Common Objectives
+- `minimize_volatility` - Lowest risk portfolio
+- `maximize_sharpe_ratio` - Best risk-adjusted returns
+- `maximize_return` - Highest expected returns
+- `minimize_cvar` - Minimize tail risk
+
+### Common Constraints
+- `max_weight 0.3` - No asset exceeds 30%
+- `min_weight 0.05` - Each asset at least 5%
+- `max_volatility 0.15` - Portfolio volatility ≤ 15%
+- `sector_tech 0.4` - Tech sector ≤ 40%
+
+For detailed examples and advanced usage, see the [Portfolio Optimization Examples](#portfolio-optimization-examples) section above.
