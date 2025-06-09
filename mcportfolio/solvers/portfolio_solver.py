@@ -19,6 +19,7 @@ from mcportfolio.models.portfolio_base_models import PortfolioProblem
 # Alternative data sources
 try:
     import pandas_datareader as pdr
+
     PANDAS_DATAREADER_AVAILABLE = True
 except ImportError:
     PANDAS_DATAREADER_AVAILABLE = False
@@ -57,8 +58,17 @@ def _get_data_from_stooq(tickers: list[str], period: str = "1y") -> tuple[pd.Dat
         # Convert period to start/end dates
         end_date = datetime.now()
         period_days = {
-            "1d": 1, "5d": 5, "1mo": 30, "3mo": 90, "6mo": 180,
-            "1y": 365, "2y": 730, "5y": 1825, "10y": 3650, "ytd": 200, "max": 3650
+            "1d": 1,
+            "5d": 5,
+            "1mo": 30,
+            "3mo": 90,
+            "6mo": 180,
+            "1y": 365,
+            "2y": 730,
+            "5y": 1825,
+            "10y": 3650,
+            "ytd": 200,
+            "max": 3650,
         }
         days = period_days.get(period, 365)
         start_date = end_date - timedelta(days=days)
@@ -86,12 +96,14 @@ def _get_data_from_stooq(tickers: list[str], period: str = "1y") -> tuple[pd.Dat
 
             # Restructure to match yfinance multi-index format
             price_data = {}
-            for col in ['Open', 'High', 'Low', 'Close']:
-                price_data[col] = pd.DataFrame({
-                    ticker: combined_data[f"{col}_{ticker}"]
-                    for ticker in tickers
-                    if f"{col}_{ticker}" in combined_data.columns
-                })
+            for col in ["Open", "High", "Low", "Close"]:
+                price_data[col] = pd.DataFrame(
+                    {
+                        ticker: combined_data[f"{col}_{ticker}"]
+                        for ticker in tickers
+                        if f"{col}_{ticker}" in combined_data.columns
+                    }
+                )
 
             # Create MultiIndex columns like yfinance
             if price_data:
@@ -106,9 +118,6 @@ def _get_data_from_stooq(tickers: list[str], period: str = "1y") -> tuple[pd.Dat
         return None, f"Stooq error: {e}"
 
 
-
-
-
 def _get_data_from_fred(tickers: list[str], period: str = "1y") -> tuple[pd.DataFrame | None, str]:
     """Fetch data from FRED (Federal Reserve Economic Data) - mainly for economic indicators."""
     if not PANDAS_DATAREADER_AVAILABLE:
@@ -120,8 +129,17 @@ def _get_data_from_fred(tickers: list[str], period: str = "1y") -> tuple[pd.Data
         # Convert period to start/end dates
         end_date = datetime.now()
         period_days = {
-            "1d": 1, "5d": 5, "1mo": 30, "3mo": 90, "6mo": 180,
-            "1y": 365, "2y": 730, "5y": 1825, "10y": 3650, "ytd": 200, "max": 3650
+            "1d": 1,
+            "5d": 5,
+            "1mo": 30,
+            "3mo": 90,
+            "6mo": 180,
+            "1y": 365,
+            "2y": 730,
+            "5y": 1825,
+            "10y": 3650,
+            "ytd": 200,
+            "max": 3650,
         }
         days = period_days.get(period, 365)
         start_date = end_date - timedelta(days=days)
@@ -133,8 +151,8 @@ def _get_data_from_fred(tickers: list[str], period: str = "1y") -> tuple[pd.Data
         for ticker in tickers:
             # Map common tickers to FRED series
             fred_mapping = {
-                'SPY': 'SP500',  # S&P 500
-                'QQQ': 'NASDAQCOM',  # NASDAQ
+                "SPY": "SP500",  # S&P 500
+                "QQQ": "NASDAQCOM",  # NASDAQ
                 # Add more mappings as needed
             }
             if ticker in fred_mapping:
@@ -151,9 +169,6 @@ def _get_data_from_fred(tickers: list[str], period: str = "1y") -> tuple[pd.Data
     except Exception as e:
         logger.warning(f"FRED data source failed: {e}")
         return None, f"FRED error: {e}"
-
-
-
 
 
 def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any]:
@@ -196,11 +211,10 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
                 if individual_data:
                     # Combine individual ticker data
                     combined_data = {}
-                    for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
-                        combined_data[col] = pd.DataFrame({
-                            ticker: individual_data[ticker][col]
-                            for ticker in individual_data.keys()
-                        })
+                    for col in ["Open", "High", "Low", "Close", "Adj Close", "Volume"]:
+                        combined_data[col] = pd.DataFrame(
+                            {ticker: individual_data[ticker][col] for ticker in individual_data.keys()}
+                        )
 
                     # Create MultiIndex columns like yf.download
                     data = pd.concat(combined_data, axis=1)
@@ -235,8 +249,8 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
             return {
                 "status": "error",
                 "message": f"Unable to retrieve real market data for tickers {tickers}. "
-                          f"All data sources failed: {error_summary}. "
-                          f"Please check ticker symbols and try again later, or verify internet connectivity."
+                f"All data sources failed: {error_summary}. "
+                f"Please check ticker symbols and try again later, or verify internet connectivity.",
             }
 
         logger.info(f"Final data shape: {data.shape}")
@@ -246,7 +260,7 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
         if data.empty:
             return {
                 "status": "error",
-                "message": f"No data retrieved for tickers: {tickers}. Errors: {'; '.join(error_messages)}"
+                "message": f"No data retrieved for tickers: {tickers}. Errors: {'; '.join(error_messages)}",
             }
 
         # Handle multi-index columns
@@ -299,7 +313,8 @@ def retrieve_stock_data(tickers: list[str], period: str = "1y") -> dict[str, Any
         if len(returns) < 2:
             return {
                 "status": "error",
-                "message": f"Insufficient data points for tickers: {tickers}. Need at least 2 days of data, got {len(returns)}.",
+                "message": f"Insufficient data points for tickers: {tickers}. "
+                f"Need at least 2 days of data, got {len(returns)}.",
             }
 
         # Verify we have data for all tickers

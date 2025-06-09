@@ -11,9 +11,7 @@ def patched_style_use(style: str | list[str]) -> None:
     """Patch matplotlib style.use to handle old seaborn style names"""
     if style == "seaborn-deep":
         style = "seaborn-v0_8-deep"
-    elif isinstance(style, str) and style.startswith("seaborn-") and not style.startswith(
-        "seaborn-v0_8"
-    ):
+    elif isinstance(style, str) and style.startswith("seaborn-") and not style.startswith("seaborn-v0_8"):
         # Convert old seaborn style names to new format
         style = style.replace("seaborn-", "seaborn-v0_8-")
     return original_style_use(style)
