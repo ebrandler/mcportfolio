@@ -65,6 +65,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
+          # Add provenance setting to fix the warning
+          provenance: ${{ github.event_name != 'pull_request' }}
+          # For pull requests, load the image instead of pushing
+          load: ${{ github.event_name == 'pull_request' }}
 
       # Test Docker image if not pushing (PR context)
       - name: Test Docker image
