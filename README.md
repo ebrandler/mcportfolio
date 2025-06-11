@@ -1,4 +1,4 @@
-// Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
+`// Modified by Edward Brandler, based on original files from It gives a universal solver interface for Model-Constraint-Problem (MCP). It makes the [PyPortfolioOpt](https://pyportfolioopt.readthedocs.io/en/latest/) library's features available to Large Language Models (LLMs) through an MCP Server. The main goal is to let . and [USolver](https://github.com/sdiehl/usolver)`
 
 # <img src=".github/mcportfolio_logo_small.jpg" width="35" height="35" alt="McPortfolio" style="vertical-align: middle;"> McPortfolio - LLM-Driven Portfolio Optimization
 
