@@ -19,6 +19,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # Required for OIDC token generation
+      attestations: write  # Required for provenance attestations
 
     steps:
       - name: Checkout repository
@@ -26,6 +28,18 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      # Debug: Print environment information
+      - name: Debug environment
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Registry: ${{ env.REGISTRY }}"
+          echo "Image name: ${{ env.IMAGE_NAME }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Token available: ${{ secrets.GITHUB_TOKEN != '' }}"
 
       # Login against a Docker registry except on PR
       - name: Log into registry ${{ env.REGISTRY }}
@@ -35,6 +49,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          logout: false
 
       # Extract metadata (tags, labels) for Docker
       - name: Extract Docker metadata
@@ -43,7 +58,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=schedule
+            type=schedule,pattern=nightly
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
@@ -53,6 +68,19 @@ jobs:
             type=sha
             type=edge
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-') }}
+          labels: |
+            org.opencontainers.image.title=McPortfolio
+            org.opencontainers.image.description=LLM-Driven Portfolio Optimization MCP Server
+            org.opencontainers.image.vendor=ebrandler
+
+      # Debug: Show what will be built
+      - name: Debug build information
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Tags to be built:"
+          echo "${{ steps.meta.outputs.tags }}"
+          echo "Labels to be applied:"
+          echo "${{ steps.meta.outputs.labels }}"
 
       # Build and push Docker image with Buildx
       - name: Build and push Docker image
@@ -67,9 +95,27 @@ jobs:
           platforms: ${{ github.event_name != 'pull_request' && 'linux/amd64,linux/arm64' || '' }}
           provenance: ${{ github.event_name != 'pull_request' }}
           load: ${{ github.event_name == 'pull_request' }}
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=McPortfolio MCP Server
+
+      # Verify push success and test image
+      - name: Verify Docker image push
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Verifying pushed images..."
+          for tag in $(echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'); do
+            echo "Checking tag: $tag"
+            docker manifest inspect "$tag" || echo "Warning: Could not inspect $tag"
+          done
 
       # Test Docker image if not pushing (PR context)
       - name: Test Docker image
         if: github.event_name == 'pull_request'
         run: |
-          docker images 
+          docker images
+          # Test that the image can start
+          docker run --rm -d --name test-mcportfolio -p 8001:8001 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.number }}
+          sleep 10
+          # Test health endpoint
+          curl -f http://localhost:8001/health || exit 1
+          # Clean up
+          docker stop test-mcportfolio
