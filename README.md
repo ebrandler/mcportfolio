@@ -1,10 +1,6 @@
 // Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
 
-# McPortfolio - LLM-Driven Portfolio Optimization
-
-<p align="center">
-    <img src=".github/logo.png" width="500px" alt="McPortfolio">
-</p>
+# <img src=".github/mcportfolio_logo_small.jpg" width="35" height="35" alt="McPortfolio" style="vertical-align: middle;"> McPortfolio - LLM-Driven Portfolio Optimization
 
 This project allows users to work with advanced portfolio optimization using natural language, without writing code. It provides **9 specialized MCP tools** covering everything from classic mean-variance optimization to modern machine learning approaches like Hierarchical Risk Parity.
 
