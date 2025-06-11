@@ -2,15 +2,25 @@
 
 ## Problem Description
 
-The GitHub Actions workflow was failing when attempting to push Docker images to the GitHub Container Registry (ghcr.io) with the error:
+The GitHub Actions workflow was failing with multiple issues:
 
+1. **Permissions Error**: When attempting to push Docker images to the GitHub Container Registry (ghcr.io):
 ```
 failed to push ghcr.io/ebrandler/mcportfolio:nightly: denied: permission_denied: write_package
 ```
 
+2. **Annotation Index Error**: During Docker image build step:
+```
+index annotations not supported for single platform export
+```
+
 ## Root Cause Analysis
 
-The issue was caused by insufficient permissions configuration in the GitHub Actions workflow for accessing the GitHub Container Registry (ghcr.io). While the workflow had `packages: write` permission, additional permissions and configuration were needed for proper authentication and attestation.
+The issues were caused by two main problems:
+
+1. **Insufficient Permissions**: The GitHub Actions workflow lacked sufficient permissions for accessing the GitHub Container Registry (ghcr.io). While the workflow had `packages: write` permission, additional permissions were needed for OIDC token generation and provenance attestations.
+
+2. **Incompatible Annotation Configuration**: The workflow was attempting to use index annotations (`annotation-index`) on single-platform builds, which is only supported for multi-platform builds.
 
 ## Solution Implemented
 
@@ -40,7 +50,14 @@ Updated the Docker metadata action to:
 - Add comprehensive image labels
 - Improve tag generation logic
 
-### 4. Added Debugging and Verification
+### 4. Fixed Annotation Index Issue
+
+Resolved the single-platform annotation problem:
+- Made index annotations conditional on multi-platform builds
+- Used `annotation-index` only for non-PR contexts (multi-platform)
+- Simplified outputs for PR contexts (single-platform)
+
+### 5. Added Debugging and Verification
 
 Added comprehensive debugging steps:
 - Environment variable logging

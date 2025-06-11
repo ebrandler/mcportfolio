@@ -95,7 +95,7 @@ jobs:
           platforms: ${{ github.event_name != 'pull_request' && 'linux/amd64,linux/arm64' || '' }}
           provenance: ${{ github.event_name != 'pull_request' }}
           load: ${{ github.event_name == 'pull_request' }}
-          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=McPortfolio MCP Server
+          outputs: ${{ github.event_name != 'pull_request' && 'type=image,name=target,annotation-index.org.opencontainers.image.description=McPortfolio MCP Server' || 'type=image,name=target' }}
 
       # Verify push success and test image
       - name: Verify Docker image push
