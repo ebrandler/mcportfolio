@@ -41,6 +41,16 @@ jobs:
           echo "Ref: ${{ github.ref }}"
           echo "Token available: ${{ secrets.GITHUB_TOKEN != '' }}"
 
+      # Check if GITHUB_TOKEN is present
+      - name: Check if GITHUB_TOKEN is present
+        run: |
+          if [ -z "${{ secrets.GITHUB_TOKEN }}" ]; then
+            echo "GITHUB_TOKEN is not set"
+            exit 1
+          else
+            echo "GITHUB_TOKEN is set"
+          fi
+
       # Login against a Docker registry except on PR
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -48,8 +58,30 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
           logout: false
+
+      # Verify Docker login success
+      - name: Who am I in Docker?
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Docker info after login:"
+          docker info
+          echo "Checking registry authentication:"
+          echo "Registry: ${{ env.REGISTRY }}"
+          echo "Username: ${{ github.actor }}"
+
+      # Check registry connectivity and existing packages
+      - name: Check registry connectivity
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Testing registry connectivity..."
+          echo "Full image name will be: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          echo "Expected format: ghcr.io/ebrandler/mcportfolio"
+
+          # Try to check if package already exists (this might fail, which is OK)
+          echo "Checking for existing package..."
+          docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || echo "No existing package found (this is OK for first push)"
 
       # Extract metadata (tags, labels) for Docker
       - name: Extract Docker metadata
