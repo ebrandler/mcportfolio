@@ -1,5 +1,5 @@
 ```
-// Modified by Edward Brandler, based on original files from [PyPortfolioOpt](https://pyportfolioopt.readthedocs.io/en/latest/) and [USolver](https://github.com/sdiehl/usolver)
+// Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
 ```
 
 # <img src=".github/mcportfolio_logo_small.jpg" width="70" height="70" alt="McPortfolio" style="vertical-align: middle;"> McPortfolio - LLM-Driven Portfolio Optimization
