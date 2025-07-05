@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/ebrandler-mcportfolio-badge.png)](https://mseep.ai/app/ebrandler-mcportfolio)
+
 ```
 // Modified by Edward Brandler, based on original files from PyPortfolioOpt and USolver
 ```
